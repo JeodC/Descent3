@@ -1,6 +1,7 @@
 set(HEADERS)
 set(CPPS
   omflex.cpp
+  musicapi.cpp
   sequencer.cpp
   streamer.cpp
   tracklist.cpp)
@@ -17,4 +18,9 @@ target_include_directories(music PUBLIC
   $<BUILD_INTERFACE:
   ${PROJECT_SOURCE_DIR}/music
   >
+)
+
+add_library(d3music STATIC ${HEADERS} ${CPPS})
+target_link_libraries(d3music PRIVATE
+  music
 )

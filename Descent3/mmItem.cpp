@@ -446,11 +446,9 @@ void mmInterface::CopyrightText() {
   grtext_SetAlpha(192);
   grtext_SetColor(GR_RGB(255, 32, 32));
 
-  grtext_Printf(x, y, "%s %d.%d.%d %s", type, Program_version.major,
-                Program_version.minor, Program_version.build, D3_GIT_HASH);
+  grtext_Printf(x, y, "%s %d.%d", type, Program_version.major, Program_version.minor);
   grtext_SetFlags(GRTEXTFLAG_SHADOW);
-  grtext_Printf(x, y, "%s %d.%d.%d %s", type, Program_version.major,
-                Program_version.minor, Program_version.build, D3_GIT_HASH);
+  grtext_Printf(x, y, "%s %d.%d", type, Program_version.major, Program_version.minor);
 
   grtext_Flush();
 }

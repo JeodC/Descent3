@@ -419,14 +419,14 @@ int main(int argc, char *argv[]) {
 
   GatherArgs(argv);
 
-  snprintf(game_version_buffer, sizeof(game_version_buffer), "%d.%d.%d%s %s", D3_MAJORVER, D3_MINORVER, D3_BUILD,
-           D3_GIT_HASH, GAME_VERS_EXT);
+  snprintf(game_version_buffer, sizeof(game_version_buffer), "%d.%d.%d%s%s", D3_MAJORVER, D3_MINORVER, D3_BUILD,
+           LOKI_VERSION, GAME_VERS_EXT);
 
   loki_setgamename("descent3" GAME_NAME_EXT, game_version_buffer, "Descent 3");
 
   snprintf(game_version_buffer, sizeof(game_version_buffer),
            "\n\n"
-           "Descent 3 %s %s v%d.%d.%d %s\n"
+           "Descent 3 %s %s v%d.%d.%d%s\n"
            "Copyright (C) 1999 Outrage Entertainment, Inc.\n",
 
 #if defined(__APPLE__) && defined(__MACH__)
@@ -442,7 +442,7 @@ int main(int argc, char *argv[]) {
 #else
            "Client",
 #endif
-           D3_MAJORVER, D3_MINORVER, D3_BUILD, D3_GIT_HASH);
+           D3_MAJORVER, D3_MINORVER, D3_BUILD, LOKI_VERSION);
 
   game_version += 2; // skip those first newlines for loki_initialize.
 

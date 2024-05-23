@@ -156,7 +156,6 @@
 #ifndef PROGRAM_H
 #define PROGRAM_H
 
-#include "d3_version.h"
 #include "pstypes.h"
 
 #define DEVELOPMENT_VERSION 0x1 // without editor: with debug, no beta
@@ -164,6 +163,10 @@
 
 #define BETA_VERSION 0x1000 // beta modifier.
 #define DEMO_VERSION 0x2000 // same as release, but its the demo.
+
+#define D3_MAJORVER 0x1 // DESCENT 3 VERSION NUMBER
+#define D3_MINORVER 0x5
+#define D3_BUILD    0x0
 
 struct program_version {
   int version_type;

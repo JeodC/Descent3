@@ -18,11 +18,6 @@ if(UNIX)
   set(CPPS ${CPPS} lnxscreenmode.cpp)
 endif()
 
-# These are excluded.
-#opengl.cpp
-#renderer.cpp
-#Direct3D.cpp
-
 add_library(renderer STATIC ${HEADERS} ${CPPS})
 target_link_libraries(renderer PRIVATE
   bitmap

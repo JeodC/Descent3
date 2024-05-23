@@ -188,15 +188,13 @@
  * $NoKeywords: $
  */
 
+#include "Debug.h"
+#include "mono.h"
+
 #include <windows.h>
 #include <cstdarg>
 #include <cstdlib>
 #include <cstdint>
-
-#include "d3_version.h"
-#include "debug.h"
-#include "mem.h"
-#include "mono.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -248,8 +246,8 @@ int Debug_ErrorBox(int type, const char *title, const char *topstring, const cha
   else
     debug_break();
 
-  char *tmpbuf = (char *)mem_malloc(
-      strlen(dumptext) + strlen(topstring) + strlen(bottomstring) +
+  char *tmpbuf = (char *)GlobalAlloc(
+      GMEM_FIXED, strlen(dumptext) + strlen(topstring) + strlen(bottomstring) +
                       10); // malloc(strlen(dumptext) + strlen(topstring) + strlen(bottomstring) + 10);
 
   strcpy(tmpbuf, topstring);
@@ -269,7 +267,7 @@ int Debug_ErrorBox(int type, const char *title, const char *topstring, const cha
   ShowCursor(FALSE);
 
   // free(tmpbuf);
-  mem_free(tmpbuf);
+  GlobalFree(tmpbuf);
 
   //	ShowWindow(wnd, SW_SHOWMAXIMIZED);
 
@@ -1205,7 +1203,6 @@ int __cdecl RecordExceptionInfo(PEXCEPTION_POINTERS data, const char *Message) {
     WriteFile(LogFile, callstack, lstrlen(callstack), &NumBytes, 0);
 
 #if (defined(RELEASE) && (!defined(DEMO)))
-    wsprintf(callstack, "Descent 3 Release build %s\r\n", D3_GIT_HASH);
     WriteFile(LogFile, callstack, lstrlen(callstack), &NumBytes, 0);
 #endif
     RecordSystemInformation(LogFile);

@@ -295,14 +295,17 @@ add_executable(Descent3
   ${HEADERS} ${CPPS} ${PLATFORM_CPPS} ${INCS}
 )
 target_link_libraries(Descent3
-  2dlib AudioEncode bitmap cfile czip d3music dd_video ddebug ddio libmve libacm
-  fix grtext manage mem misc model module movie stream_audio
-  music networking physics renderer rtperformance sndlib ui unzip vecmat md5
+  2dlib AudioEncode bitmap cfile czip d3music dd_video ddebug ddio libmve libacm fix grtext manage md5 mem misc model module movie stream_audio music networking physics renderer rtperformance sndlib ui unzip vecmat
   ${PLATFORM_LIBS})
 target_include_directories(Descent3 PRIVATE ${PROJECT_BINARY_DIR}/lib)
-add_dependencies(Descent3 get_git_hash Direct_TCP_IP_Hog HogFull NetgamesDir Parallax_Online_Hog)
-install(TARGETS Descent3 RUNTIME)
+add_dependencies(Descent3 PackageDirs LicenseDir)
 
-if(BUILD_TESTING)
-  add_subdirectory(tests)
+if(ENABLE_NETGAMES)
+  add_dependencies(Descent3 Direct_TCP_IP_Hog Parallax_Online_Hog NetgamesDir)
 endif()
+
+if(ENABLE_SCRIPTS)
+  add_dependencies(Descent3 HogFull)
+endif()
+
+install(TARGETS Descent3 RUNTIME)

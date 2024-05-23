@@ -129,6 +129,7 @@
 #define _DESCENT_H
 
 #include <stdlib.h>
+#include <string>
 #include "application.h"
 
 // The name of this product
@@ -166,6 +167,13 @@ enum function_mode {
   LOADDEMO_MODE,
   GAMEGAUGE_MODE, // Unused
   CREDITS_MODE
+};
+
+struct file_vols {
+    const char* fileName;
+    const char* localPath;
+    int volumeNumber;
+    bool isCritical;
 };
 
 extern bool Descent_overrided_intro;

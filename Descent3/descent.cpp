@@ -408,6 +408,7 @@
 #include "args.h"
 #include "multi_dll_mgr.h"
 #include "localization.h"
+#include "mem.h"
 
 //	---------------------------------------------------------------------------
 //	Variables
