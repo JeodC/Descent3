@@ -655,6 +655,8 @@
  * $NoKeywords: $
  */
 
+#include <sys/stat.h>
+
 #include "game.h"
 #include "ddvid.h"
 #include "ddio.h"
@@ -1259,6 +1261,14 @@ bool GetFrameParameters(int *x1, int *y1, int *x2, int *y2) {
   */
 }
 
+bool DirectoryExists(const char *path) {
+  struct stat info;
+  if (stat(path, &info) != 0) {
+    return false;
+  }
+  return (info.st_mode & S_IFDIR) != 0;
+}
+
 void EndFrame() {
   //@@Frame_inside = false;
   rend_EndFrame();
@@ -1276,7 +1286,7 @@ void EndFrame() {
   }
 }
 
-// Does a screenshot and tells the bitmap lib to save out the picture as a tga
+// Does a screenshot and tells the bitmap lib to save out the picture as a png
 void DoScreenshot() {
   int count;
   char str[255], filename[255];
@@ -1301,21 +1311,30 @@ void DoScreenshot() {
     return;
   }
 
+  // Use the screenshots directory if it exists
+  bool useScreenshotsDir = DirectoryExists("screenshots");
+
   // Find a valid filename
   count = 1;
   while (!done) {
     snprintf(str, sizeof(str), "Screenshot%.3d.png", count);
-    ddio_MakePath(filename, Base_directory, str, NULL);
+    if (useScreenshotsDir) {
+      ddio_MakePath(filename, Base_directory, "screenshots/", str, NULL);
+    } else {
+      ddio_MakePath(filename, Base_directory, str, NULL);
+    }
     infile = (CFILE *)cfopen(filename, "rb");
     if (infile == NULL) {
       done = 1;
       continue;
-    } else
+    } else {
       cfclose(infile);
+    }
 
     count++;
-    if (count > 999)
+    if (count > 999) {
       break;
+    }
   }
 
   // Now save it
