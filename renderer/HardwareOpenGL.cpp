@@ -115,7 +115,7 @@ static int OpenGL_verts_processed = 0;
 static int OpenGL_uploads = 0;
 static int OpenGL_sets_this_frame[10];
 static int OpenGL_packed_pixels = 0;
-static int Cur_texture_object_num = 1;
+static int Cur_texture_object_num = 2;
 static int OpenGL_cache_initted = 0;
 static int OpenGL_last_bound[2];
 static int Last_texel_unit_set = -1;
@@ -290,7 +290,7 @@ int opengl_InitCache(void) {
   OpenGL_lightmap_states = (uint8_t *)mem_malloc(MAX_LIGHTMAPS);
   ASSERT(OpenGL_lightmap_states);
 
-  Cur_texture_object_num = 1;
+  Cur_texture_object_num = 2;
 
   // Setup textures and cacheing
   int i;
