@@ -247,7 +247,10 @@ module *LoadOpenGLDLL(const char *dllname) {
     return NULL;
   }
 #endif
+  return &OpenGLDLLInst;
+}
 
+module *LoadOpenGLFunctions(){
   dglAlphaFunc = (glAlphaFunc_fp)mod_GetSymbol(&OpenGLDLLInst, "glAlphaFunc", 255);
   if (!dglAlphaFunc)
     goto dll_error;

@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.20)  # For using CMAKE_<LANG>_BYTE_ORDER
 
-# set default cmake build type to Debug (None Debug Release RelWithDebInfo MinSizeRel)
+# ==============================================================================
+# General Configuration
+# ==============================================================================
+
+# Set default CMake build type to Debug if not specified
 if(NOT CMAKE_BUILD_TYPE AND NOT DEFINED ENV{CMAKE_BUILD_TYPE})
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "default build type")
 endif()
@@ -16,9 +20,15 @@ option(ENABLE_NETGAMES "Enable compiling netcon and netgames subdirectories" OFF
 option(ENABLE_SCRIPTS "Enable compiling scripts subdirectory" OFF)
 option(ENABLE_EDITOR "Enable compiling the internal dev editor" OFF)
 
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  option(BUILD_EDITOR "Build internal editor" OFF)
-endif()
+option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored compiler warnings/errors (GCC/Clang only; esp. useful with ninja)." OFF)
+option(ENABLE_LOGGER "Enable logging to the terminal" OFF)
+option(ENABLE_NETGAMES "Enable compiling netcon and netgames subdirectories" OFF)
+option(ENABLE_SCRIPTS "Enable compiling scripts subdirectory" OFF)
+option(ENABLE_EDITOR "Enable compiling the internal dev editor" OFF)
+
+# ==============================================================================
+# Compiler and Language Settings
+# ==============================================================================
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -38,23 +48,18 @@ if(FORCE_COLORED_OUTPUT)
   endif()
 endif()
 
-include(GNUInstallDirs)
-if(FORCE_PORTABLE_INSTALL)
-  set(CMAKE_INSTALL_BINDIR ".")
-  set(CMAKE_INSTALL_LIBDIR ".")
-  set(CMAKE_INSTALL_DATADIR ".")
-  set(CMAKE_INSTALL_DOCDIR ".")
-endif()
-
-if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/installed" CACHE PATH "Default install path" FORCE)
-endif()
+# ==============================================================================
+# System Endianness
+# ==============================================================================
 
 if(CMAKE_CXX_BYTE_ORDER STREQUAL "BIG_ENDIAN")
   message(STATUS "Big Endian system detected.")
   add_compile_definitions("OUTRAGE_BIG_ENDIAN")
 endif()
 
+# ==============================================================================
+# Machine Architecture
+# ==============================================================================
 
 # 64 bit machines have a different game checksum than 32 bit machines
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
@@ -63,32 +68,28 @@ else()
   add_definitions(-DCHECKSUM=2273873307UL)
 endif()
 
-if(BUILD_TESTING)
-  find_package(GTest REQUIRED)
-  enable_testing()
-  include(GoogleTest)
-  add_subdirectory(tests)
-endif()
+# ==============================================================================
+# Custom Commands and Targets
+# ==============================================================================
 
-# rebuild d3_version.h every time
-add_custom_target(get_git_hash ALL)
-
-add_custom_command(
-  TARGET get_git_hash
-  COMMAND ${CMAKE_COMMAND}
-    -D SOURCE_DIR=${PROJECT_SOURCE_DIR}
-    -D TARGET_DIR=${PROJECT_BINARY_DIR}
-    -D PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
-    -D PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
-    -D PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
-    -P ${PROJECT_SOURCE_DIR}/cmake/CheckGit.cmake
-  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+# Create package directories
+add_custom_target(PackageDirs
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/custom/cache"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/custom/graphics"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/custom/settings"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/custom/sounds"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/demo"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/missions"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/movies"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/savegame"
+  COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:Descent3>/screenshots"
+  COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/LICENSE" "$<TARGET_FILE_DIR:Descent3>/GPL-3.txt"
+  COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_SOURCE_DIR}/README.md" "$<TARGET_FILE_DIR:Descent3>/README.md"
 )
 
-install(
-  FILES LICENSE README.md THIRD_PARTY.md
-  DESTINATION ${CMAKE_INSTALL_DOCDIR}
-)
+# ==============================================================================
+# Compiler Options Based on Platform
+# ==============================================================================
 
 if(UNIX)
   add_compile_options("$<$<COMPILE_LANGUAGE:CXX>:-Wno-multichar;${BITS};${EXTRA_CXX_FLAGS}>")
@@ -109,7 +110,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
   set(PLATFORM_INCLUDES "lib/linux" ${SDL2_INCLUDE_DIR} ${SDL2_INCLUDE_DIRS})
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   # Windows.h defines to avoid as many issues as possible.
-  add_compile_definitions(WIN32_LEAN_AND_MEAN NOMINMAX NODRAWTEXT NOBITMAP NOMCX NOSERVICE PRIMARY_HOG=\"d3-win.hog\"
+  add_compile_definitions(WIN32_LEAN_AND_MEAN NOMINMAX NODRAWTEXT NOBITMAP NOMCX NOSERVICE NOHELP PRIMARY_HOG=\"d3-win.hog\"
           #[[NOGDI]] # We need GDI for now, enable when GDI is actually not needed (or when all windows.h mentions are gone)
   )
 
@@ -148,48 +149,67 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Windows")
   add_compile_options("/MP")  # so msbuild builds with multiple processes
 endif()
 
+# ==============================================================================
+# General Definitions
+# ==============================================================================
+
 add_compile_definitions($<$<CONFIG:Release>:RELEASE>)
 add_compile_definitions($<$<CONFIG:Debug>:_DEBUG>)
-
-find_package(ZLIB REQUIRED)
+add_compile_definitions($<$<BOOL:${ENABLE_MEM_RTL}>:MEM_USE_RTL>)
 
 if(ENABLE_LOGGER)
   message("Enabling Logging")
   add_compile_definitions(LOGGER)
 endif()
 
+# ==============================================================================
+# Find Required Packages
+# ==============================================================================
+
+find_package(ZLIB REQUIRED)
+
+# ==============================================================================
+# Include Directories
+# ==============================================================================
+
 include_directories(
-  "cfile"   # TODO: Remove after untying all modules
-  "ddebug"  # -*-
-  "fix"     # -*-
-  "lib"     # TODO: Remove after untying all modules
-  "linux"   # -*-
+  "cfile"       # TODO: Remove after untying all modules
+  "ddebug"      # -*-
+  "fpmath"         # -*-
+  "lib"         # TODO: Remove after untying all modules
+  "linux"       # -*-
+  "third_party" # -*-
   "Descent3"
   ${PLATFORM_INCLUDES}
 )
 
-add_subdirectory(third_party)
+# ==============================================================================
+# Platform Specific Directories
+# ==============================================================================
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  add_subdirectory(win32)
+else()
+  add_subdirectory(linux)
+endif()
+
+# ==============================================================================
+# Subdirectories
+# ==============================================================================
 
 add_subdirectory(2dlib)
 add_subdirectory(AudioEncode)
 add_subdirectory(bitmap)
 add_subdirectory(cfile)
 add_subdirectory(czip)
-add_subdirectory(d3music)
 add_subdirectory(ddebug)
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  add_subdirectory(dd_grwin32)
-  add_subdirectory(win32)
-else()
-  add_subdirectory(linux)
-endif()
-
-add_subdirectory(ddio)
 add_subdirectory(dd_video)
-add_subdirectory(fix)
-add_subdirectory(manage)
+add_subdirectory(ddio)
+add_subdirectory(Descent3)
+add_subdirectory(fpmath)
 add_subdirectory(grtext)
+add_subdirectory(libmve)
+add_subdirectory(manage)
 add_subdirectory(mem)
 add_subdirectory(misc)
 add_subdirectory(model)
@@ -202,21 +222,25 @@ add_subdirectory(renderer)
 add_subdirectory(rtperformance)
 add_subdirectory(sndlib)
 add_subdirectory(stream_audio)
+add_subdirectory(third_party)
+add_subdirectory(tools)
 add_subdirectory(ui)
 add_subdirectory(unzip)
 add_subdirectory(vecmat)
-add_subdirectory(libmve)
-add_subdirectory(md5)
-add_subdirectory(libacm)
 
+# ==============================================================================
+# Conditionally Enabled Subdirectories
+# ==============================================================================
 
-if(BUILD_EDITOR AND CMAKE_SYSTEM_NAME STREQUAL "Windows")
-  add_subdirectory(editor)
+if(ENABLE_NETGAMES)
+  add_subdirectory(netcon)
+  add_subdirectory(netgames)
 endif()
 
-add_subdirectory(Descent3)
+if(ENABLE_SCRIPTS)
+  add_subdirectory(scripts)
+endif()
 
-add_subdirectory(tools)
-add_subdirectory(netcon)
-add_subdirectory(netgames)
-add_subdirectory(scripts)
+if(ENABLE_EDITOR)
+  add_subdirectory(editor)
+endif()

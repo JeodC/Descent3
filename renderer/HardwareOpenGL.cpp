@@ -596,7 +596,7 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
     GSDLWindow = NULL;
     return 0;
   }
-  LoadGLFunctions();
+  LoadOpenGLFunctions();
 
   if (!FindArg("-nomousegrab")) {
     ddio_mouseGrabbed = true;
