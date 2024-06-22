@@ -314,6 +314,7 @@ class oeApplication;
 #define REPLACEMENT_COLOR 0x07C0
 
 extern int Triangles_drawn;
+extern int winw, winh;
 
 // Is this hardware or software rendered?
 enum renderer_type {

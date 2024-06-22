@@ -67,6 +67,7 @@ uint8_t Renderer_close_flag = 0;
 extern uint8_t Renderer_initted;
 renderer_type Renderer_type = RENDERER_OPENGL;
 int WindowGL = 0;
+int winw, winh = 0;
 
 extern matrix Unscaled_matrix;
 extern vector View_position;
@@ -1899,25 +1900,48 @@ void rend_ResetCache(void) {
 
 // Fills a rectangle on the display
 void rend_FillRect(ddgr_color color, int x1, int y1, int x2, int y2) {
+  SDL_GetWindowSize(GSDLWindow, &winw, &winh);
+
+  // Calculate the screen width and height from gpu_state
+  int screen_width = gpu_state.screen_width;
+  int screen_height = gpu_state.screen_height;
+
+  // Compute the scaled coordinates and dimensions
+  int scaled_x1 = x1 * winw / screen_width;
+  int scaled_y1 = y1 * winh / screen_height;
+  int scaled_x2 = x2 * winw / screen_width;
+  int scaled_y2 = y2 * winh / screen_height;
+
+  // Calculate the width and height of the scaled rectangle
+  int scaled_width = scaled_x2 - scaled_x1;
+  int scaled_height = scaled_y2 - scaled_y1;
+
+  // Adjust the rectangle position and dimensions according to the clipping region
+  scaled_x1 += gpu_state.clip_x1 * winw / screen_width;
+  scaled_y1 += gpu_state.clip_y1 * winh / screen_height;
+
+  // Get color components
   int r = GR_COLOR_RED(color);
   int g = GR_COLOR_GREEN(color);
   int b = GR_COLOR_BLUE(color);
 
-  int width = x2 - x1;
-  int height = y2 - y1;
-
-  x1 += gpu_state.clip_x1;
-  y1 += gpu_state.clip_y1;
-
+  // Enable scissor test and set the scissor box
   dglEnable(GL_SCISSOR_TEST);
-  dglScissor(x1, gpu_state.screen_height - (height + y1), width, height);
+  dglScissor(scaled_x1, winh - (scaled_height + scaled_y1), scaled_width, scaled_height);
+    
+  // Set the clear color and clear the rectangle area
   dglClearColor((float)r / 255.0, (float)g / 255.0, (float)b / 255.0, 0);
   dglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  width = gpu_state.clip_x2 - gpu_state.clip_x1;
-  height = gpu_state.clip_y2 - gpu_state.clip_y1;
+  // Restore the original scissor box
+  int clip_x1 = gpu_state.clip_x1 * winw / screen_width;
+  int clip_y1 = gpu_state.clip_y1 * winh / screen_height;
+  int clip_x2 = gpu_state.clip_x2 * winw / screen_width;
+  int clip_y2 = gpu_state.clip_y2 * winh / screen_height;
+  int clip_width = clip_x2 - clip_x1;
+  int clip_height = clip_y2 - clip_y1;
 
-  dglScissor(gpu_state.clip_x1, gpu_state.screen_height - (gpu_state.clip_y1 + height), width, height);
+  dglScissor(clip_x1, winh - (clip_y1 + clip_height), clip_width, clip_height);
   dglDisable(GL_SCISSOR_TEST);
 }
 
@@ -2265,18 +2289,27 @@ void *rend_RetrieveDirectDrawObj(void **frontsurf, void **backsurf) {
   return NULL;
 }
 
+// Stretch to fit
 void rend_TransformSetToPassthru(void) {
   int width = gpu_state.screen_width;
   int height = gpu_state.screen_height;
+  SDL_GetWindowSize(GSDLWindow, &winw, &winh);
 
-  // TODO: Generalize
-  // Projection
+  // Calculate scaled dimensions to fit the window without maintaining aspect ratio
+  int scaled_width = winw;
+  int scaled_height = winh;
+
+  // Set the viewport dimensions to match window size
+  int x_offset = 0;
+  int y_offset = 0;
+
+  // Projection (adjust to match scaled dimensions)
   dglMatrixMode(GL_PROJECTION);
   dglLoadIdentity();
-  dglOrtho((GLfloat)0.0f, (GLfloat)(width), (GLfloat)(height), (GLfloat)0.0f, 0.0f, 1.0f);
+  dglOrtho(0.0f, (GLfloat)width, (GLfloat)height, 0.0f, 0.0f, 1.0f);
 
   // Viewport
-  dglViewport(0, 0, width, height);
+  dglViewport(x_offset, y_offset, scaled_width, scaled_height);
 
   // ModelView
   dglMatrixMode(GL_MODELVIEW);
@@ -2284,7 +2317,20 @@ void rend_TransformSetToPassthru(void) {
 }
 
 void rend_TransformSetViewport(int lx, int ty, int width, int height) {
-  dglViewport(lx, gpu_state.screen_height - (ty + height - 1), width, height);
+  SDL_GetWindowSize(GSDLWindow, &winw, &winh);
+
+  // Compute the scaled coordinates for the viewport
+  int scaledLx = lx * winw / gpu_state.screen_width;
+  int scaledTy = ty * winh / gpu_state.screen_height;
+  int scaledWidth = width * winw / gpu_state.screen_width;
+  int scaledHeight = height * winh / gpu_state.screen_height;
+
+  // Calculate the adjusted viewport position
+  int viewportX = scaledLx;
+  int viewportY = winh - (scaledTy + scaledHeight);
+
+  // Set the viewport with the scaled values
+  dglViewport(viewportX, viewportY, scaledWidth, scaledHeight);
 }
 
 void rend_TransformSetProjection(float trans[4][4]) {
