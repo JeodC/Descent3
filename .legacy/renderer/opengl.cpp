@@ -962,7 +962,7 @@ D3DError:
 }
 
 // Releases the rendering context
-void opengl_Close(const bool just_resizing) {
+void opengl_Close() {
   CHECK_ERROR(5)
 
   uint32_t *delete_list = (uint32_t *)mem_malloc(Cur_texture_object_num * sizeof(int));
