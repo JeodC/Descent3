@@ -14,42 +14,6 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
---- HISTORICAL COMMENTS FOLLOW ---
-
- * $Logfile: /DescentIII/main/menu.h $
- * $Revision: 5 $
- * $Date: 4/17/99 6:15p $
- * $Author: Samir $
- *
- * menu header
- *
- * $Log: /DescentIII/main/menu.h $
- *
- * 5     4/17/99 6:15p Samir
- * replaced gr.h with grdefs.h and fixed resulting compile bugs.
- *
- * 4     12/15/98 4:28p Jeff
- * added mission data information to the pilot files to save what the
- * highest level they achieved on a mission is.  Added level select dialog
- * (not hooked up) and level warp cheat.
- *
- * 3     5/24/98 2:58a Jeff
- * Options menu changes.  MenuOptions now takes a parameter, whether its
- * being called from the game or not
- *
- * 2     3/02/98 5:53p Samir
- * Added MenuOptions prototype.
- *
- * 3     4/29/97 5:29p Samir
- * New game calls mission functions.
- *
- * 2     2/10/97 11:49a Jason
- * checked in for samir
- *
- * 1     2/04/97 2:50p Samir
- *
- * $NoKeywords: $
  */
 
 #ifndef MENU_H
@@ -109,5 +73,38 @@ void MenuOptions(bool ingame);
 // DisplayLevelWarpDlg
 //	pass in the max level allowed to be chosen, if -1, than all levels are allowed (a.k.a level warp cheat)
 int DisplayLevelWarpDlg(int max_level);
+
+// DisplayLevelSelectDlg
+// displays a list of levels associated with the selected mission
+int DisplayLevelSelectDlg(int max_level);
+
+// Array of level names for Descent 3: Retribution
+inline const char* RetributionNames[] = {
+  "PTMC Data Retention Center",     // Level 1
+  "Novak Corporate Prison",         // Level 2
+  "Piccu Station & SRAD Research",  // Level 3
+  "PTMC Corporate Headquarters",    // Level 4
+  "Red Acropolis Research Station", // Level 5
+  "Martian Nomad Caverns",          // Level 6
+  "PTMC Research Bunker",           // Level 7
+  "PTMC Dol Ammad Fuel Refinery",   // Level 8
+  "PTMC Spacecraft Factory",        // Level 9
+  "CED Lunar Command Base",         // Level 10
+  "PTMC Storage Facility",          // Level 11
+  "CED Expediator Dreadnaught",     // Level 12
+  "CED Orbital Network Transmitter",// Level 13
+  "Dravis' Stronghold"              // Level 14
+};
+
+// Array of level names for Descent 3: Mercenary
+inline const char* MercenaryNames[] = {
+  "PTMC Mars Colony",                      // Level 1
+  "CED S.O.G Command Center",              // Level 2
+  "CED Tacking Station",                   // Level 3
+  "Alien Planetoid-Zeta Aquilae System",   // Level 4
+  "PTMC Secret Laboratory",                // Level 5
+  "PTMC Celium Mine",                      // Level 6
+  "PTMC Corporate Headquarters (Mercenary)"// Level 7
+};
 
 #endif

@@ -14,642 +14,6 @@
 *
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
---- HISTORICAL COMMENTS FOLLOW ---
-
- * $Logfile: /DescentIII/Main/menu.cpp $
- * $Revision: 194 $
- * $Date: 10/17/01 3:43p $
- * $Author: Matt $
- *
- * main menu code
- *
- * $Log: /DescentIII/Main/menu.cpp $
- *
- * 194   10/17/01 3:43p Matt
- * Took out Kevin's -mission changes since we decided to change the readme
- * instead.
- *
- * 193   10/03/01 10:57p Kevin
- * fixed -mission
- *
- * 192   8/30/01 10:48a Matt
- * Check pilot command-line arg only once, not every time we go into main
- * menu.
- *
- * 191   4/19/00 5:17p Matt
- * From Duane for 1.4
- * Added Mac-only mem free
- *
- * 190   3/20/00 12:16p Matt
- * Merge of Duane's post-1.3 changes.
- * Index fix in building mission list (Mac only)
- *
- * 189   11/04/99 8:07a Kevin
- * don't put the player into the training mission the first time in if the
- * -mission flag was specified
- *
- * 188   10/25/99 9:51a Matt
- * Mac merge
- *
- * 187   8/02/99 10:31a Kevin
- * Fixed duplicate games in new game menu
- *
- * 186   7/30/99 1:49p Kevin
- * Fixed Mac related menu bug
- *
- * 185   7/28/99 4:04p Kevin
- * Macintosh!
- *
- * 184   5/25/99 3:44a Jeff
- * reset cheater flag when going into multiplayer game
- *
- * 183   5/24/99 2:12a Matt
- * Fixed stupid bug that caused -pilot to not work.
- *
- * 182   5/12/99 10:54a Kevin
- * When going to the load game screen from the main menu, always set the
- * game mode to none. In some cases where loading a multiplayer level
- * failed, the mode was still GM_MULTI
- *
- * 181   5/05/99 11:16p Kevin
- * heat.net stuff among other things
- *
- * 180   5/03/99 10:16p Kevin
- * added -pilot to work just like +name
- *
- * 179   5/03/99 3:35p Kevin
- * bug fixes
- *
- * 178   5/02/99 7:26p Samir
- * changed some sequencing so when finishing training mission, the main
- * menu does not pop up.
- *
- * 177   5/02/99 12:55a Jeff
- * save ship permissions at highest level achieved and use that on restore
- * to a level previously played
- *
- * 176   4/29/99 3:21a Samir
- * reorganized main menu music to work in config, multiplayer, whereever.
- *
- * 175   4/25/99 6:14p Kevin
- * added "-timetest file.dem" to behave like gamegauge does
- *
- * 174   4/20/99 7:30p Jeff
- * use last directory when displaying load level dialog
- *
- * 173   4/18/99 7:55p Samir
- * new progress indicator for delays when loading data.
- *
- * 172   4/17/99 3:44p Kevin
- * Demo2 changes & fixes
- *
- * 171   4/16/99 11:15p Jeff
- * itoa for linux added
- *
- * 170   4/16/99 6:00p Kevin
- * Bunches of Demo stuff
- *
- * 169   4/16/99 11:56a Matt
- * Changed directplay code to be "ifdef _WIN32" instead of "ifndef
- * __LINUX__" so it will work on the Mac.
- *
- * 168   4/15/99 1:40a Jeff
- * changes for linux compile
- *
- * 167   4/14/99 3:07p Kevin
- * Fixed some multiple CD bugs
- *
- * 166   4/14/99 2:51a Jeff
- * fixed some case mismatched #includes
- *
- * 165   4/08/99 3:12p Matt
- * Finished cleaning up level sequencing code.  Got rid of all the "level
- * minus one" stuff.
- *
- * 164   4/07/99 3:40p Kevin
- * Fixes for Beta 1
- *
- * 163   4/05/99 10:57a Samir
- * fixed potential crash in mission list generation.
- *
- * 162   3/31/99 3:04p Jeff
- * added _real_ temporary credits system...
- *
- * 161   3/29/99 5:32p Kevin
- * Build fixes
- *
- * 160   3/29/99 11:19a Matt
- * Fixed compile warning
- *
- * 159   3/24/99 2:58p Kevin
- * Doh! I forgot to save the files first!!@#@#$
- *
- * 158   3/24/99 2:56p Kevin
- * Fixed level specific progress indicator to have a default for single
- * player missions, and fixed the default mission name (put it in the
- * stringtable)
- *
- * 157   3/24/99 10:54a Kevin
- * Fixed some problems related to splitting up the main d3.mn3 file across
- * 2 CDs
- *
- * 156   3/18/99 3:51p Kevin
- * Fixed support for MN3 files
- *
- * 155   3/18/99 12:51p Samir
- * debug info.
- *
- * 154   3/18/99 10:13a Samir
- * added music.
- *
- * 153   3/09/99 6:34p Kevin
- * Made the training mission not be branching, and fixed the crash with
- * people dying in the demo playback
- *
- * 152   3/09/99 1:37p Kevin
- * Fixed lame sequencing bug in multiplayer
- *
- * 151   3/04/99 6:09p Samir
- * wait message for mission load dialog.
- *
- * 150   3/03/99 7:19p Jeff
- * removed levelwarp dialog for OEM
- *
- * 149   3/03/99 1:56p Samir
- * always assert that game mode is set to GM_NONE when entering main menu.
- * (when trying load game after escaping from multiplayer game list menu,
- * the game mode still seemed to be in GM_MULTI.)
- *
- * 148   3/02/99 11:31p Kevin
- *
- * 147   3/02/99 7:20p Kevin
- *
- * 146   3/02/99 11:52a Kevin
- * Fixes for OEM Beta 4.1
- *
- * 145   3/01/99 9:49p Jeff
- * fixed stray paren
- *
- * 144   3/01/99 9:03p Kevin
- * OEM Beta 4
- *
- * 143   2/28/99 3:26a Samir
- * redid newgame dialog.
- *
- * 142   2/26/99 7:36p Kevin
- * Fixed the oem mission name
- *
- * 141   2/26/99 7:16p Kevin
- * Added extern for ShowStaticScreen so it will compile in OEM
- *
- * 140   2/26/99 5:36p Samir
- * Added credits screens.
- *
- * 139   2/25/99 4:29p Jeff
- * mission data of pilot keeps track of all missions, not just after you
- * beat a level
- *
- * 138   2/24/99 3:15p Kevin
- * OEM menu changes, and bug fixes for the save/load system
- *
- * 137   2/20/99 2:30p Kevin
- * Made multiplayer DLLs return to the game list after a game.
- *
- * 136   2/20/99 1:14a Kevin
- * enabled choosing any mission number in the oem build (for now)
- *
- * 135   2/16/99 12:06p Samir
- * revamped ui for config menus.
- *
- * 134   2/16/99 12:36a Kevin
- * Fixes for release builds of OEM V3 and KAtmai
- *
- * 133   2/15/99 7:49p Jeff
- * new pilot file class and read/write system checked in...should be more
- * robust than old
- *
- * 132   2/08/99 2:39p Kevin
- * Fixed command line joining & disabled gamespy launching in OEM builds
- *
- * 131   2/05/99 7:23p Kevin
- * OEM Changes
- *
- * 130   2/03/99 4:20p Kevin
- * Got multiplayer working with .mn3 files, and setup autodownloading
- *
- * 129   1/31/99 7:26p Matt
- * Renamed a bunch of functions to have HUD capitalized
- *
- * 128   1/29/99 5:22p Jeff
- * localization
- *
- * 127   1/19/99 1:15p Samir
- * add on missions.
- *
- * 126   1/04/99 6:12p Jeff
- * close mission window when displaying level select
- *
- * 125   1/04/99 5:43p Kevin
- * new command line args
- *
- * 124   12/30/98 5:24p Kevin
- * Added +name to specify a default pilot (for gamespy) fixed a gamespy
- * bug, and improved the pxo dll game list screen
- *
- * 123   12/21/98 6:32p Matt
- * Fixed small bug
- *
- * 122   12/21/98 3:33p Samir
- * level warp fully implemented.
- *
- * 121   12/16/98 3:24p Samir
- * new way to get info on a mission (used to determine training mission
- * too.)
- *
- * 120   12/15/98 4:28p Jeff
- * added mission data information to the pilot files to save what the
- * highest level they achieved on a mission is.  Added level select dialog
- * (not hooked up) and level warp cheat.
- *
- * 119   11/23/98 4:52p Kevin
- * Demo system enhancments
- *
- * 118   11/19/98 5:40p Kevin
- * Demo system
- *
- * 117   11/18/98 3:26p Kevin
- * Put multiplayer options into con_dll.h
- *
- * 116   11/06/98 10:53a Kevin
- * Added demo playback
- *
- * 115   10/22/98 10:03a Jeff
- * renamed some things to keep them consistent
- *
- * 114   10/22/98 12:45a Matt
- * Before starting the game, get rid of the menu and leave just the
- * background screen up (while the briefing stuff is loading).
- *
- * 113   10/21/98 7:18p Matt
- * Added quick-exit system to not free individual mem chunks on exit,
- * since the whole heap gets freed at the end.
- *
- * 112   10/19/98 8:07p Matt
- * Added credits screens, and took out blank line in the main menu.
- *
- * 111   10/18/98 7:28p Samir
- * added weapon selection to options menu.
- *
- * 110   10/17/98 7:34p Samir
- * fixed bug when changing video modes, causing screen to not refresh.
- *
- * 109   10/17/98 6:11p Jeff
- * pilot select appears before main menu is shown
- *
- * 108   10/16/98 1:54p Kevin
- * Changes for Demo Beta 4
- *
- * 107   10/15/98 1:15p Kevin
- * Changed #ifndef RELEASE to #ifdef _DEBUG
- *
- * 106   10/13/98 3:48p Samir
- * added credits menu.
- *
- * 105   10/12/98 1:46p Samir
- * initial new main menu
- *
- * 104   10/08/98 10:47p Samir
- * added copyright message.
- *
- * 103   10/08/98 7:31p Samir
- * fixed memory crash bug if there are nomissions to load in listbox.
- *
- * 102   10/08/98 12:00p Kevin
- * Demo system work
- *
- * 101   10/07/98 6:23p Samir
- * added code to bail if in multiplayer for options menu.
- *
- * 100   10/07/98 1:08p Craig
- * fixed some simple multiplayer thing.
- *
- * 99    10/06/98 5:34p Jeff
- * various UI changes/improvements
- *
- * 98    10/02/98 12:30p Samir
- * added version information for beta/demo.
- *
- * 97    10/01/98 12:57p Samir
- * resized mission listbox.
- *
- * 96    9/30/98 12:33p Kevin
- * Added web launching support
- *
- * 95    9/30/98 10:36a Kevin
- * Added command line launching of URLs and command line directory
- * specification
- *
- * 94    9/28/98 4:35p Jeff
- * general UI changes and improvements
- *
- * 93    9/23/98 6:19p Jeff
- * finished up (hopefully) updating the config/ui dialogs to meet our
- * standard.  Keyboard/joystick config still needs some work
- *
- * 92    9/23/98 3:07p Jeff
- * updated the colors and various other items of config and UI
- *
- * 91    9/22/98 3:56p Samir
- * special demo code doesn't allow pilot and mission stuff.
- *
- * 90    9/22/98 10:37a Jason
- * added loadlevel command line argument for autostarting of levels
- *
- * 89    9/08/98 11:41a Jeff
- * call new pilot selection dialog
- *
- * 88    9/02/98 2:54p Jeff
- * added defines for text colors to be used throughout the game...fixed up
- * buddy menu too
- *
- * 87    9/01/98 12:44p Jeff
- * clear screen as soon as user double clicks on mission
- *
- * 86    8/31/98 12:38p Samir
- * new game dialog is no longer a 'menu' based window.
- *
- * 85    8/25/98 10:53a Samir
- * restored simple menu system
- *
- * 84    8/24/98 10:55a Kevin
- * new directplay stuff
- *
- * 83    8/20/98 11:29a Samir
- * adjusted placement of main menu items.
- *
- * 82    8/20/98 10:52a Samir
- * added load game(restore game) functionality from main menu.
- *
- * 81    8/14/98 7:37p Matt
- * Since PSFILENAME_LEN is now considered to be the max length of the
- * string itself (not counting the terminating null), buffers for file
- * name need to be PSFILENAME_LEN+1 bytes long.
- *
- * 80    8/07/98 2:44p Jeff
- * set all ships allowed when going into multiplayer.  Reset permissions
- * when selecting new game
- *
- * 79    7/29/98 6:43p Jeff
- * changed so menu loadlevel used file dialog
- *
- * 78    7/27/98 6:25p Jeff
- * fixed bug when changing screen size in menu
- *
- * 77    7/10/98 12:08p Kevin
- * fixed auto connect to only happen once
- *
- * 76    7/10/98 10:47a Kevin
- * Added command line connecting to games
- *
- * 75    6/19/98 5:40p Samir
- * added hud configuration.
- *
- * 74    6/16/98 10:56a Jeff
- * localization changes
- *
- * 73    6/15/98 4:00p Jason
- * replaced monochromatic polymodel lighting with rgb lighting
- *
- * 72    5/25/98 8:19p Samir
- * display mission menu.
- *
- * 71    5/24/98 2:58a Jeff
- * Options menu changes.  MenuOptions now takes a parameter, whether its
- * being called from the game or not
- *
- * 70    5/23/98 6:33p Jeff
- * renamed the hotspots for the Options menu
- *
- * 69    5/18/98 3:56p Samir
- * added D3_FAST mode to quickly enter and exit games.
- *
- * 68    5/12/98 2:48p Samir
- * show cursor in main menu.
- *
- * 67    5/08/98 4:31p Samir
- * set ui callback to nothing if we're done with main menu.
- *
- * 66    5/08/98 3:58p Samir
- * reposition options menu after video config.
- *
- * 65    5/05/98 5:15p Samir
- * adjusted menus to work in 512x384 as well as 640x480.
- *
- * 64    5/04/98 10:51a Jeff
- * changed menu font color
- *
- * 63    5/01/98 6:25p Samir
- * brightened up options menu.
- *
- * 62    5/01/98 4:25p Samir
- * sped up menu animation.
- *
- * 61    5/01/98 3:26p Samir
- * menu items should be aligned properly.
- *
- * 60    4/29/98 1:04p Jeff
- * fixed up colors in the windows, text strings and others
- *
- * 59    4/28/98 4:46p Samir
- * use new menu font for menu.
- *
- * 58    4/28/98 11:55a Jeff
- * Removed ConfigSave and replaced with SaveGameSettings
- *
- * 57    4/20/98 11:30a Jason
- * Added ShowProgressScreen function
- *
- * 56    4/13/98 7:01p Samir
- * added snazzy listbox and edit box art.
- *
- * 55    4/10/98 7:55p Samir
- * new main menu interface system.
- *
- * 54    4/09/98 5:30p Samir
- * new main  menu art.
- *
- * 53    4/02/98 3:54p Jason
- * first pass in getting polymodel paging to work
- *
- * 52    4/02/98 11:11a Samir
- * Error checking for level load/misison init fail.
- *
- * 51    3/20/98 1:19p Jeff
- * Changes made to use Default_pilot string for pilot filename to use.
- *
- * 50    3/13/98 8:55p Jeff
- * Various changes to move control configuration into Pilot file
- *
- * 49    3/13/98 12:49p Jeff
- * Fixed "Load Level" option it now works
- *
- * 48    3/13/98 12:10p Samir
- * Added a simple load level menu function, UI must be implemented.
- *
- * 47    3/12/98 8:31p Jeff
- * fixed bug in Load A Level option
- *
- * 46    3/12/98 8:29p Jeff
- * Put in Load Level option for non-release
- *
- * 45    3/12/98 7:09p Jeff
- * Added "Pilots" to main menu
- *
- * 44    3/12/98 2:15p Jeff
- * changed options menu text colors
- *
- * 43    3/12/98 2:01p Jeff
- * Made it so user can't cancel out of Pilot dialog (passed true to
- * PilotDisplay)
- *
- * 42    3/11/98 5:38p Jeff
- * Automatically calls PilotDisplay to choose pilot before main menu
- *
- * 41    3/10/98 12:48p Samir
- * Options menu has new look.
- *
- * 40    3/09/98 4:00p Jeff
- * Pilot test (temp) added to main menu for Pilot screen testing
- *
- * 39    3/05/98 6:38p Samir
- * Use UI_FONT now.
- *
- * 38    3/02/98 5:53p Samir
- * Don't set alpha of UI windows.
- *
- * 37    2/27/98 5:35p Jeff
- * Added in loading and saving of a game configuration file
- *
- * 36    2/24/98 3:43p Jeff
- * added more configuration options in the Options menu
- *
- * 35    2/16/98 9:27p Samir
- * Added test code for movies.
- *
- * 34    2/15/98 7:07p Samir
- * Added two controller options in the options menu.
- *
- * 33    2/13/98 6:38p Samir
- * Added menu movie.
- *
- * 32    2/11/98 4:36p Samir
- * Call SetGameMode to modify game mode.
- *
- * 31    2/10/98 3:46p Samir
- * Call config function when choosing 'configuration'.
- *
- * 30    1/30/98 7:33p Samir
- * Jazzed up menus.
- *
- * 29    1/30/98 2:39p Samir
- * Commented out real-time code.
- *
- * 28    1/26/98 2:28p Jason
- * fixed main menu arguments
- *
- * 27    1/26/98 10:36a Samir
- * Changed UI a bit.
- *
- * 26    1/19/98 10:56a Samir
- * Adjusted menu a bit.
- *
- * 25    1/18/98 4:22p Samir
- * Implemented new UIItem system.
- *
- * 24    1/15/98 11:14a Jeff
- * Added/Changed code to get Telcom working again
- *
- * 23    1/13/98 6:29p Samir
- * Moved Large Bitmap code from Menu.cpp to newui.cpp.
- *
- * 22    1/13/98 4:28p Samir
- * Added sliders.
- *
- * 21    1/12/98 5:24p Samir
- * Menu uses new font.
- *
- * 20    1/08/98 12:18p Samir
- * New menu interface.
- *
- * 19    1/06/98 2:44p Jason
- * another pass for multiplayer
- *
- * 18    1/06/98 2:15p Samir
- * Took out test stuff.
- *
- * 17    1/05/98 10:56a Samir
- * New menu stuff.
- *
- * 16    12/19/97 2:12p Samir
- * Fixed menu.
- *
- * 15    12/11/97 3:15p Samir
- * Stubbed out menu code.
- *
- * 14    11/19/97 10:44a Jason
- * minor changes to menu
- *
- * 13    11/18/97 6:34p Jason
- * sped up main menu animation, added alpha support, and made it work in
- * software mode.
- *
- * 12    11/17/97 4:31p Matt
- * Got rid of compile warning
- *
- * 11    11/14/97 7:02p Samir
- * Milestone menu.
- *
- * 10    11/12/97 2:52p Samir
- * Slightly more complicated, slower frame rate animating background.
- *
- * 9     11/11/97 1:28p Samir
- * Simple 3d background.
- *
- * 8     11/04/97 4:56p Samir
- * Main menu beginning to work.
- *
- * 7     10/15/97 3:05p Samir
- * Redraw menu each frame.
- *
- * 6     10/02/97 12:36p Samir
- * Redid game sequencing flow.
- *
- * 5     7/23/97 4:46p Jeff
- * Added call to SetScreenMode() in MainMenu() to init Game_view
- *
- * 7     6/11/97 2:25p Samir
- * Changed gameos to new system
- *
- * 6     5/15/97 2:09p Samir
- * Start mission when new game.
- *
- * 5     4/29/97 5:29p Samir
- * New game calls mission functions.
- *
- * 4     3/17/97 1:15p Matt
- * Cleaned up menu a little
- *
- * 3     2/04/97 5:33p Samir
- * Added Editor option to 'menu'.
- *
- * 2     2/04/97 2:33p Samir
- * Cheap menu
- *
- * 1     2/03/97 5:27p Samir
- * Initial version
- *
- * $NoKeywords: $
  */
 
 #include <cstdio>
@@ -713,6 +77,7 @@ bool IsRestoredGame = false;
 //////////////////////////////////////////////////////////////////////////////
 extern bool Demo_looping;
 bool FirstGame = false;
+char msnname[128];
 
 int MainMenu() {
   extern void ShowStaticScreen(char *bitmap_filename, bool timed = false, float delay_time = 0.0f);
@@ -740,7 +105,8 @@ int MainMenu() {
   // #endif
   main_menu.AddItem(IDV_OPTIONS, KEY_O, TXT_MENUOPTIONS);
   main_menu.AddItem(IDV_PILOT, KEY_P, TXT_MENUPILOTS);
-  main_menu.AddItem(IDV_MULTIPLAYER, KEY_M, TXT_MENUMULTIPLAYER);
+  //main_menu.AddItem(IDV_MULTIPLAYER, KEY_M, TXT_MENUMULTIPLAYER);
+  //main_menu.AddItem(IDV_MULTIPLAYER, KEY_M, TXT_MENUMULTIPLAYER);
   main_menu.AddItem(IDV_CREDITS, KEY_C, TXT_MENUCREDITS);
   main_menu.AddItem(IDV_QUIT, KEY_Q, TXT_MENUQUIT, MM_ENDMENU_TYPE);
 #ifdef _DEBUG
@@ -799,27 +165,6 @@ int MainMenu() {
         continue;
       }
     }
-    /*
-            else
-            {
-                    if(FirstGame)
-                    {
-                            //MenuScene();
-                            //ui_ShowCursor();
-                            //Descent->defer();
-                            //DoUIFrame();
-                            //rend_Flip();
-                            //GetUIFrameResult();
-                            res = IDV_NEWGAME;
-                    }
-                    else {
-                            main_menu.SetMusicRegion(MM_MUSIC_REGION);
-                            res = main_menu.DoUI();
-                    }
-            }
-            if (FirstGame)
-                    res = IDV_NEWGAME;
-    */
     res = FirstGame ? IDV_NEWGAME : -1;
     if (res == -1) {
       main_menu.SetMusicRegion(MM_MUSIC_REGION);
@@ -863,7 +208,7 @@ int MainMenu() {
       DoWaitMessage(true);
       PilotSelect();
       break;
-    case IDV_MULTIPLAYER: {
+    /* case IDV_MULTIPLAYER: {
       IsCheater = false;
       main_menu.SetMusicRegion(MULTI_MUSIC_REGION);
       mprintf(0, "Multiplayer!\n");
@@ -877,7 +222,7 @@ int MainMenu() {
         exit_menu = 1;
         SetFunctionMode(GAME_MODE);
       }
-    } break;
+    } break; */
     case IDV_PLAYDEMO:
       if (LoadDemoDialog()) {
         SetGameMode(GM_NORMAL);
@@ -888,19 +233,6 @@ int MainMenu() {
     case IDV_CREDITS:
       SetFunctionMode(CREDITS_MODE);
       exit_menu = 1;
-      /*
-      #if defined(DEMO)
-              //extern void ShowStaticScreen(char *bitmap_filename);
-              ShowStaticScreen("democredits1.ogf");
-              ShowStaticScreen("democredits2.ogf");
-      #elif defined(OEM)
-              ShowStaticScreen("oemcredits1.ogf");
-              ShowStaticScreen("oemcredits2.ogf");
-      #else
-      //	ShowStaticScreen("oemcredits1.ogf");
-      //	ShowStaticScreen("oemcredits2.ogf");
-      #endif
-      */
       break;
 #ifdef _DEBUG
     case IDV_LOADLEVEL: {
@@ -1307,6 +639,10 @@ redo_newgame_menu:
     char *nameptr = NULL;
     if (index >= 0 && index < n_missions) {
       nameptr = filelist[index];
+      tMissionInfo msninfo;
+      if (GetMissionInfo(nameptr, &msninfo)) {
+        strcpy(msnname, msninfo.name);
+      }
     }
 #ifndef OEM
     if (!nameptr || !LoadMission(nameptr)) {
@@ -1328,7 +664,8 @@ redo_newgame_menu:
 #endif
       if (highest > 1) {
         int start_level;
-        start_level = DisplayLevelWarpDlg(highest);
+        // Prompt for user input to select level
+        start_level = DisplayLevelSelectDlg(highest);
         if (start_level == -1) {
           goto redo_newgame_menu;
         } else {
@@ -1396,6 +733,75 @@ redo_level_choose:
     chosen_level = -1;
   }
   hwnd.Destroy();
+  return chosen_level;
+}
+// DisplayLevelSelectDlg
+// displays a list of levels associated with the selected mission
+int DisplayLevelSelectDlg(int max_level) {
+  newuiTiledWindow menu;
+  newuiSheet *select_sheet;
+  newuiListBox *level_lb;
+  int chosen_level = 1, res;
+  char buffer[128];
+  int highest_allowed;
+
+  // Create the menu window
+  menu.Create(msnname, 0, 0, MSNDLG_WIDTH, MSNDLG_HEIGHT);
+  select_sheet = menu.GetSheet();
+
+  // Add mission levels
+  level_lb = select_sheet->AddListBox(MSNLB_WIDTH, MSNLB_HEIGHT, UID_MSNLB, UILB_NOSORT);
+  for (int level = 1; level <= max_level; ++level) {
+    char level_name[100];
+    level_info lvinfo;
+
+    // Check if lvinfo has a name for the current level
+    if (lvinfo.name[0] != '\0') {
+        sprintf(level_name, "%s", lvinfo.name);
+    } else {
+        sprintf(level_name, "No name provided");
+      }
+
+    // Check if msnname matches specific strings for level names
+    if (strcmp(msnname, "Descent 3: Retribution") == 0) {
+        if (level >= 1 && level <= sizeof(RetributionNames) / sizeof(RetributionNames[0])) {
+            sprintf(level_name, "%d - %s", level, RetributionNames[level - 1]);
+        }
+    } else if (strcmp(msnname, "Descent 3: Mercenary") == 0) {
+        if (level >= 1 && level <= sizeof(MercenaryNames) / sizeof(MercenaryNames[0])) {
+            sprintf(level_name, "Level %02d - %s", level, MercenaryNames[level - 1]);
+        }
+      }
+
+    level_lb->AddItem(level_name);
+  }
+
+  // Add OK and Cancel buttons
+  select_sheet->NewGroup(NULL, 100, 280, NEWUI_ALIGN_HORIZ);
+  select_sheet->AddButton(TXT_OK, UID_OK);
+  select_sheet->AddButton(TXT_CANCEL, UID_CANCEL);
+
+  // Open the menu and handle user interactions
+  menu.Open();
+  do {
+    res = menu.DoUI();
+    if (res == UID_OK || res == UID_MSNLB) {
+      int index = level_lb->GetCurrentIndex();
+      chosen_level = index + 1; // Levels are 1-based
+      if (chosen_level < 1 || chosen_level > max_level) {
+        DoMessageBox(TXT_ERROR, TXT_CHOOSELEVEL, MSGBOX_OK);
+        continue; // Allow another selection
+      }
+      if (res == UID_MSNLB) {
+        res = UID_OK;
+      }
+    } else if (res == UID_CANCEL) {
+        chosen_level = -1;
+      }
+  } while (res != UID_OK && res != UID_CANCEL);
+
+  menu.Close();
+  menu.Destroy();
   return chosen_level;
 }
 #ifdef _DEBUG
