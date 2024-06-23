@@ -1861,7 +1861,7 @@ void TelcomCreateScreenOverlays(void) {
   TelcomLoadHiLites(smhilites, MONITOR_TOP, 0, -8);
 
   TelcomCreateScanLine();
-  TelcomLoadMouseCursor();
+  // TelcomLoadMouseCursor();
   TelcomCreateCorners();
   //	TelcomCreateStaticOverlays();
   TelcomInitPowerEffect();
@@ -1871,7 +1871,7 @@ void TelcomCreateScreenOverlays(void) {
 void TelcomDestroyScreenOverlays(void) {
   TelcomFreeHiLites();
   TelcomDestroyScanLine();
-  TelcomFreeMouseCursor();
+  // TelcomFreeMouseCursor();
   TelcomFreeCorners();
   //	TelcomFreeStaticOverlays();
   TelcomFreePowerEffect();

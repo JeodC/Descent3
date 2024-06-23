@@ -523,10 +523,12 @@ int ui_DoFrame(tUIInput *input, bool doinput) {
 }
 //	hide and show cursor. effects are cumulative
 bool ui_ShowCursor() {
+  #ifndef RELEASE
   if (!UI_cursor_show) {
     UI_cursor_show = 1;
     return false;
   }
+  #endif
   return true;
 }
 bool ui_HideCursor() {
