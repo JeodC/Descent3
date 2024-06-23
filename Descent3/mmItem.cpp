@@ -434,9 +434,9 @@ void mmInterface::CopyrightText() {
 #endif
 
   if (Program_version.version_type == DEVELOPMENT_VERSION) {
-    strcat(type, "Dev");
+    strcat(type, "PortMaster Dev");
   } else if (Program_version.version_type == RELEASE_VERSION) {
-    strcat(type, "Ver");
+    strcat(type, "PortMaster Ver");
   }
 
   int x = Max_window_w - 164, y = Max_window_h - 29; // was -128 and -16
