@@ -377,6 +377,7 @@ void SaveGameDialog() {
   char filename[PSFILENAME_LEN + 1];
   char desc[GAMESAVE_DESCLEN + 1];
   bool occupied_slot[N_SAVE_SLOTS];
+  char currmname[16];
 
   if (Game_mode & GM_MULTI) {
     DoMessageBox(TXT_ERROR, TXT_CANT_SAVE_MULTI, MSGBOX_OK);
@@ -453,6 +454,15 @@ void SaveGameDialog() {
       int slot = res - SAVE_HOTSPOT_ID;
       bool do_save = false;
 
+      // Manipulate current mission name
+      if (strcmp(Current_mission.name, "Descent 3: Retribution") == 0) {
+        strcpy(currmname, "D3");
+      } else if (strcmp(Current_mission.name, "Descent 3: Mercenary") == 0) {
+        strcpy(currmname, "Merc");
+      } else {
+        strcpy(currmname, Current_mission.name);
+      }
+
       // fill edit box with current description.
       hot = (newuiHotspot *)sheet->GetGadget(res);
       ASSERT(hot);
@@ -460,11 +470,24 @@ void SaveGameDialog() {
 
       if (occupied_slot[slot]) {
         strcpy(desc, hot_desc);
-      } else {
-        desc[0] = 0;
-      }
 
-    reenter_save:
+        // Compare desc to the current level number
+        char prefix[10];
+        sprintf(prefix, "%s Level ", currmname);
+        if (strncmp(desc, prefix, strlen(prefix)) == 0) {
+          int level_num = atoi(desc + 6);
+
+          if (level_num != Current_mission.cur_level) {
+            // It's a different level, update the description
+            snprintf(desc, sizeof(desc), "%s Level %02d", currmname, Current_mission.cur_level);
+          }
+        }
+      } else {
+          // If slot is not occupied, prefill with current level number
+          snprintf(desc, sizeof(desc), "%s Level %02d", currmname, Current_mission.cur_level);
+        }
+
+      reenter_save:
       if (DoEditDialog(TXT_DESCRIPTION, desc, sizeof(desc) - 1)) {
         // perform check for duplicate names
         // do not allow for empty or space only descriptions
