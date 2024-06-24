@@ -1902,6 +1902,12 @@ void rend_ResetCache(void) {
 void rend_FillRect(ddgr_color color, int x1, int y1, int x2, int y2) {
   SDL_GetWindowSize(GSDLWindow, &winw, &winh);
 
+  // If square, change to rectangle
+  if (winw == winh) {
+    int new_height = (int)(winw * 0.75f);
+    winh = new_height;
+  }
+
   // Calculate the screen width and height from gpu_state
   int screen_width = gpu_state.screen_width;
   int screen_height = gpu_state.screen_height;
@@ -2293,7 +2299,6 @@ void *rend_RetrieveDirectDrawObj(void **frontsurf, void **backsurf) {
 void rend_TransformSetToPassthru(void) {
   int width = gpu_state.screen_width;
   int height = gpu_state.screen_height;
-  SDL_GetWindowSize(GSDLWindow, &winw, &winh);
 
   // Calculate scaled dimensions to fit the window without maintaining aspect ratio
   int scaled_width = winw;
@@ -2317,7 +2322,6 @@ void rend_TransformSetToPassthru(void) {
 }
 
 void rend_TransformSetViewport(int lx, int ty, int width, int height) {
-  SDL_GetWindowSize(GSDLWindow, &winw, &winh);
 
   // Compute the scaled coordinates for the viewport
   int scaledLx = lx * winw / gpu_state.screen_width;
