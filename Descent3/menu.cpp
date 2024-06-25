@@ -35,6 +35,7 @@
 #include "mem.h"
 #include "args.h"
 #include "cinematics.h"
+#include "renderer.h"
 
 #ifdef _WIN32
 #define USE_DIRECTPLAY
@@ -394,6 +395,7 @@ bool ProcessCommandLine() {
 #define MSNBTN_X2 ((3 * MSNDLG_WIDTH / 4) - (MSNBTN_W / 2))
 #define MSNBTN_Y (MSNDLG_HEIGHT - 64)
 #define UID_MSNLB 100
+#define UID_LVLB 100
 #define UID_MSNINFO 0x1000
 #define TRAINING_MISSION_NAME "Pilot Training"
 static inline int count_missions(const char *pathname, const char *wildcard) {
@@ -528,7 +530,7 @@ bool MenuNewGame() {
 
   select_sheet = menu.GetSheet();
   select_sheet->NewGroup(NULL, 10, 0);
-  msn_lb = select_sheet->AddListBox(352, 256, UID_MSNLB);
+  msn_lb = select_sheet->AddListBox(352, 256, UID_MSNLB, UILB_NOSORT);
   select_sheet->NewGroup(NULL, 160, 280, NEWUI_ALIGN_HORIZ);
   select_sheet->AddButton(TXT_OK, UID_OK);
   select_sheet->AddButton(TXT_CANCEL, UID_CANCEL);
@@ -738,61 +740,61 @@ redo_level_choose:
 // DisplayLevelSelectDlg
 // displays a list of levels associated with the selected mission
 int DisplayLevelSelectDlg(int max_level) {
-  newuiTiledWindow menu;
+  newuiTiledWindow lvlsel;
   newuiSheet *select_sheet;
   newuiListBox *level_lb;
+  level_info lvinfo;
+  char level_name[100];
   int chosen_level = 1, res;
   char buffer[128];
   int highest_allowed;
 
-  // Create the menu window
-  menu.Create(msnname, 0, 0, MSNDLG_WIDTH, MSNDLG_HEIGHT);
-  select_sheet = menu.GetSheet();
+  // Create the menu
+  lvlsel.Create(msnname, 0, 0, 448, 384);
+  select_sheet = lvlsel.GetSheet();
+  select_sheet->NewGroup(NULL, 10, 0);
+  level_lb = select_sheet->AddListBox(352, 256, UID_LVLB, UILB_NOSORT);
+  select_sheet->NewGroup(NULL, 160, 280, NEWUI_ALIGN_HORIZ);
+  select_sheet->AddButton(TXT_OK, UID_OK);
+  select_sheet->AddButton(TXT_CANCEL, UID_CANCEL);
 
-  // Add mission levels
-  level_lb = select_sheet->AddListBox(MSNLB_WIDTH, MSNLB_HEIGHT, UID_MSNLB, UILB_NOSORT);
+  // Loop through the levels
   for (int level = 1; level <= max_level; ++level) {
-    char level_name[100];
-    level_info lvinfo;
-
-    // Check if lvinfo has a name for the current level
-    if (lvinfo.name[0] != '\0') {
-        sprintf(level_name, "%s", lvinfo.name);
-    } else {
-        sprintf(level_name, "No name provided");
-      }
-
-    // Check if msnname matches specific strings for level names
+    // Check if msnname matches core mission names, if so use the arrays for level names
+    // Otherwise, try to get the level name from the level info
     if (strcmp(msnname, "Descent 3: Retribution") == 0) {
-        if (level >= 1 && level <= sizeof(RetributionNames) / sizeof(RetributionNames[0])) {
-            sprintf(level_name, "%d - %s", level, RetributionNames[level - 1]);
+      if (level >= 1 && level <= sizeof(RetributionNames) / sizeof(RetributionNames[0])) {
+        if (level > 15) { // If they're the secret levels we use a different format
+          snprintf(level_name, sizeof(level_name), "Secret Lv - %s", RetributionNames[level - 1]);
+        } else {
+          snprintf(level_name, sizeof(level_name), "Lv %02d - %s", level, RetributionNames[level - 1]);
         }
+      }
     } else if (strcmp(msnname, "Descent 3: Mercenary") == 0) {
         if (level >= 1 && level <= sizeof(MercenaryNames) / sizeof(MercenaryNames[0])) {
-            sprintf(level_name, "Level %02d - %s", level, MercenaryNames[level - 1]);
+          snprintf(level_name, sizeof(level_name), "Lv %02d - %s", level, MercenaryNames[level - 1]);
         }
-      }
+    } else if (lvinfo.name[0] != '\0') {
+        snprintf(level_name, sizeof(level_name), "Lv %02d - %s", level, lvinfo.name);
+    } else {
+        snprintf(level_name, sizeof(level_name), "Lv %02d - No Name Given", level);
+    }
 
     level_lb->AddItem(level_name);
   }
 
-  // Add OK and Cancel buttons
-  select_sheet->NewGroup(NULL, 100, 280, NEWUI_ALIGN_HORIZ);
-  select_sheet->AddButton(TXT_OK, UID_OK);
-  select_sheet->AddButton(TXT_CANCEL, UID_CANCEL);
-
   // Open the menu and handle user interactions
-  menu.Open();
+  lvlsel.Open();
   do {
-    res = menu.DoUI();
-    if (res == UID_OK || res == UID_MSNLB) {
+    res = lvlsel.DoUI();
+    if (res == UID_OK || res == UID_LVLB) {
       int index = level_lb->GetCurrentIndex();
       chosen_level = index + 1; // Levels are 1-based
       if (chosen_level < 1 || chosen_level > max_level) {
         DoMessageBox(TXT_ERROR, TXT_CHOOSELEVEL, MSGBOX_OK);
         continue; // Allow another selection
       }
-      if (res == UID_MSNLB) {
+      if (res == UID_LVLB) {
         res = UID_OK;
       }
     } else if (res == UID_CANCEL) {
@@ -800,8 +802,8 @@ int DisplayLevelSelectDlg(int max_level) {
       }
   } while (res != UID_OK && res != UID_CANCEL);
 
-  menu.Close();
-  menu.Destroy();
+  lvlsel.Close();
+  lvlsel.Destroy();
   return chosen_level;
 }
 #ifdef _DEBUG
