@@ -35,7 +35,6 @@
 #include "mem.h"
 #include "args.h"
 #include "cinematics.h"
-#include "renderer.h"
 
 #ifdef _WIN32
 #define USE_DIRECTPLAY
