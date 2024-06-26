@@ -557,12 +557,16 @@ redo_newgame_menu:
       //	if we didn't escape out of any part of new game start, then go to game.
       int highest;
       CurrentPilotUpdateMissionStatus(true);
-      // gets highest level flown for mission
+      // gets highest level flown for mission, if completed just show everything
 #if defined(_DEBUG)
       highest = Current_mission.num_levels;
 #else
-      highest = PilotGetHighestLevelAchieved(&Current_pilot, Current_mission.name);
-      highest = std::min(highest + 1, Current_mission.num_levels);
+      if (HasPilotFinishedMission(&Current_pilot, Current_mission.name)) {
+        highest = Current_mission.num_levels;
+      } else {
+        highest = PilotGetHighestLevelAchieved(&Current_pilot, Current_mission.name);
+        highest = std::min(highest + 1, Current_mission.num_levels);
+      }
 #endif
       if (highest > 1) {
         int start_level;
