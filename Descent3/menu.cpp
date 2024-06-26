@@ -262,26 +262,16 @@ bool ProcessCommandLine() {
     char *p;
     char *tokp;
     strcpy(szurl, GameArgs[urlarg]);
-#ifdef DEMO
-    szurl[strlen("d3demo2://") - 1] = '\0'; // Should make the string "d3demo:/"
-    p = szurl + strlen("d3demo2://");       // pointer to the first character of the url after the //
-    if (stricmp(szurl, "d3demo2:/") == 0) {
-      mprintf(0, "Got a url passed: %s\n", p);
-    }
-#else
     szurl[strlen("descent3://") - 1] = '\0'; // Should make the string "descent3:/"
     p = szurl + strlen("descent3://");       // pointer to the first character of the url after the //
     if (stricmp(szurl, "descent3:/") == 0) {
       mprintf(0, "Got a url passed: %s\n", p);
     }
-#endif
     tokp = strtok(p, "/");
     if (stricmp(tokp, "ip") == 0) {
       tokp = strtok(NULL, "/");
       Auto_login_port[0] = '\0';
       strcpy(Auto_login_addr, tokp);
-      //			char seldll[_MAX_PATH*2];
-      // ddio_MakePath(seldll,Base_directory,"online","Direct TCP~IP Game.d3c",NULL);
       if (LoadMultiDLL("Direct TCP~IP")) {
         CallMultiDLL(MT_AUTO_LOGIN);
         if (MultiDLLGameStarting) {
@@ -297,8 +287,6 @@ bool ProcessCommandLine() {
       tokp = strtok(NULL, "/");
       Auto_login_port[0] = '\0';
       strcpy(Auto_login_addr, tokp);
-      //		char seldll[_MAX_PATH*2];
-      // ddio_MakePath(seldll,Base_directory,"online","parallax online.d3c",NULL);
       if (LoadMultiDLL("parallax online")) {
         CallMultiDLL(MT_AUTO_LOGIN);
         if (MultiDLLGameStarting) {
@@ -321,13 +309,7 @@ bool ProcessCommandLine() {
     if (AutoConnectLANIP()) {
       exit_menu = 1;
     }
-  } else if ((!Auto_connected) && (FindArg("-heat"))) {
-    Auto_connected = true;
-    if (AutoConnectHeat()) {
-      exit_menu = 1;
-    }
   }
-#ifndef OEM
   else if ((!Auto_connected) && (FindArg("+connect"))) {
     Auto_connected = true;
     int connarg = FindArg("+connect");
@@ -354,7 +336,6 @@ bool ProcessCommandLine() {
       }
     }
   }
-#endif
   else if ((!Auto_connected) && (Directplay_lobby_launched_game)) {
     Auto_connected = true;
 #ifdef USE_DIRECTPLAY
@@ -462,7 +443,6 @@ static inline int generate_mission_listbox(newuiListBox *lb, int n_maxfiles, cha
 }
 extern bool Skip_next_movie;
 #define OEM_TRAINING_FILE "training.mn3"
-#define OEM_MISSION_FILE "d3oem.mn3"
 bool MenuNewGame() {
   newuiTiledWindow menu;
   newuiSheet *select_sheet;
@@ -471,59 +451,7 @@ bool MenuNewGame() {
   int n_missions, i, res; //,k
   bool found = false;
   bool do_menu = true, load_mission = false, retval = true;
-#ifdef DEMO
-  if (LoadMission("d3demo.mn3")) {
-    CurrentPilotUpdateMissionStatus(true);
-    // go into game mode.
-    SetGameMode(GM_NORMAL);
-    SetFunctionMode(GAME_MODE);
-    return true;
-  } else {
-    DoMessageBox(TXT_ERROR, TXT_ERRLOADMSN, MSGBOX_OK);
-    return false;
-  }
-#else
-#ifdef RELEASE
-  if ((!FindArg("-mission")) && (!FirstGame) && (-1 == Current_pilot.find_mission_data(TRAINING_MISSION_NAME))) {
 
-    FirstGame = true;
-
-    char moviepath[_MAX_PATH];
-    ddio_MakePath(moviepath, LocalD3Dir, "movies", "level1.mve", nullptr);
-    if (cfexist(moviepath)) {
-      PlayMovie(moviepath);
-    }
-    Skip_next_movie = true;
-
-    if (LoadMission("training.mn3")) {
-      CurrentPilotUpdateMissionStatus(true);
-      // go into game mode.
-      SetGameMode(GM_NORMAL);
-      SetFunctionMode(GAME_MODE);
-      return true;
-    } else {
-      DoMessageBox(TXT_ERROR, TXT_ERRLOADMSN, MSGBOX_OK);
-      return false;
-    }
-  } else if (FirstGame) {
-    FirstGame = false;
-#ifdef OEM
-    if (LoadMission(OEM_MISSION_FILE))
-#else
-    if (LoadMission("d3.mn3"))
-#endif
-    {
-      CurrentPilotUpdateMissionStatus(true);
-      // go into game mode.
-      SetGameMode(GM_NORMAL);
-      SetFunctionMode(GAME_MODE);
-      return true;
-    } else {
-      DoMessageBox(TXT_ERROR, TXT_ERRLOADMSN, MSGBOX_OK);
-      return false;
-    }
-  }
-#endif
   // create menu.
   menu.Create(TXT_MENUNEWGAME, 0, 0, 448, 384);
 
@@ -533,17 +461,12 @@ bool MenuNewGame() {
   select_sheet->NewGroup(NULL, 160, 280, NEWUI_ALIGN_HORIZ);
   select_sheet->AddButton(TXT_OK, UID_OK);
   select_sheet->AddButton(TXT_CANCEL, UID_CANCEL);
-#ifndef OEM
   select_sheet->AddButton(TXT_MSNINFO, UID_MSNINFO);
-#endif
-#ifndef OEM
+
   // add mission names to listbox
   // count valid mission files.
   // add a please wait dialog here.
   n_missions = 0;
-#ifndef RELEASE
-  n_missions = count_missions(LocalLevelsDir, "*.msn");
-#endif
   n_missions += count_missions(D3MissionsDir, "*.mn3");
   if (n_missions) {
     // allocate extra mission slot because of check below which adds a name to the filelist.
@@ -558,11 +481,7 @@ bool MenuNewGame() {
   }
   // generate real listbox now.
   i = 0;
-#ifndef RELEASE
-  i = generate_mission_listbox(msn_lb, n_missions, filelist, LocalLevelsDir, "*.msn");
-#endif
   i += generate_mission_listbox(msn_lb, n_missions - i, filelist + i, D3MissionsDir, "*.mn3");
-  // #ifdef RELEASE
   int k;
   for (k = 0; k < n_missions; k++) {
     if (!filelist[k])
@@ -577,18 +496,6 @@ bool MenuNewGame() {
     msn_lb->AddItem(TXT_MAINMISSION);
     n_missions++;
   }
-// #endif
-#else
-#define OEM_MISSION_NAME "Descent 3: Sol Ascent"
-#define OEM_TRAINING_NAME "Pilot Training "
-  n_missions = 2;
-  filelist = (char **)mem_malloc(sizeof(char *) * 2);
-  filelist[0] = mem_strdup(OEM_MISSION_FILE);
-  ;
-  msn_lb->AddItem(OEM_MISSION_NAME);
-  filelist[1] = mem_strdup(OEM_TRAINING_FILE);
-  msn_lb->AddItem(OEM_TRAINING_NAME);
-#endif
   DoWaitMessage(false);
 redo_newgame_menu:
   // run menu
@@ -596,7 +503,6 @@ redo_newgame_menu:
 
   do {
     res = menu.DoUI();
-#ifndef OEM
     if (res == UID_MSNINFO) {
       tMissionInfo msninfo;
       int index = msn_lb->GetCurrentIndex();
@@ -629,7 +535,6 @@ redo_newgame_menu:
         }
       }
     }
-#endif
   } while (res != UID_OK && res != UID_CANCEL && res != UID_MSNLB);
   menu.Close();
   // check stuff
@@ -645,11 +550,7 @@ redo_newgame_menu:
         strcpy(msnname, msninfo.name);
       }
     }
-#ifndef OEM
     if (!nameptr || !LoadMission(nameptr)) {
-#else
-    if (!LoadMission(nameptr)) {
-#endif
       DoMessageBox(TXT_ERROR, TXT_ERRLOADMSN, MSGBOX_OK);
       retval = false;
     } else {
@@ -657,7 +558,7 @@ redo_newgame_menu:
       int highest;
       CurrentPilotUpdateMissionStatus(true);
       // gets highest level flown for mission
-#if defined(_DEBUG) || defined(DAJ_DEBUG)
+#if defined(_DEBUG)
       highest = Current_mission.num_levels;
 #else
       highest = PilotGetHighestLevelAchieved(&Current_pilot, Current_mission.name);
@@ -671,7 +572,7 @@ redo_newgame_menu:
           goto redo_newgame_menu;
         } else {
           Current_mission.cur_level = start_level;
-          // pull out the ship permssions and use them
+          // pull out the ship permissions and use them
           Players[0].ship_permissions = GetPilotShipPermissions(&Current_pilot, Current_mission.name);
         }
       }
@@ -693,7 +594,6 @@ missions_fail:
     mem_free(filelist);
   }
   return retval;
-#endif
 }
 // DisplayLevelWarpDlg
 //	pass in the max level allowed to be chosen, if -1, than all levels are allowed (a.k.a level warp cheat)
