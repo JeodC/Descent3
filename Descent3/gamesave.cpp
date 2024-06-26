@@ -454,10 +454,13 @@ void SaveGameDialog() {
       int slot = res - SAVE_HOTSPOT_ID;
       bool do_save = false;
 
+      #define MISSION_RETRIBUTION "Descent 3: Retribution"
+      #define MISSION_MERCENARY "Descent 3: Mercenary"
+
       // Manipulate current mission name
-      if (strcmp(Current_mission.name, "Descent 3: Retribution") == 0) {
+      if (strcmp(Current_mission.name, MISSION_RETRIBUTION) == 0) {
         strcpy(currmname, "D3");
-      } else if (strcmp(Current_mission.name, "Descent 3: Mercenary") == 0) {
+      } else if (strcmp(Current_mission.name, MISSION_MERCENARY) == 0) {
         strcpy(currmname, "Merc");
       } else {
         strcpy(currmname, Current_mission.name);
@@ -468,24 +471,15 @@ void SaveGameDialog() {
       ASSERT(hot);
       hot_desc = hot->GetTitle();
 
-      if (occupied_slot[slot]) {
-        strcpy(desc, hot_desc);
-
-        // Compare desc to the current level number
-        char prefix[10];
-        sprintf(prefix, "%s Level ", currmname);
-        if (strncmp(desc, prefix, strlen(prefix)) == 0) {
-          int level_num = atoi(desc + 6);
-
-          if (level_num != Current_mission.cur_level) {
-            // It's a different level, update the description
-            snprintf(desc, sizeof(desc), "%s Level %02d", currmname, Current_mission.cur_level);
-          }
-        }
+      // Prefill with current level number
+      // Special case for secret levels
+      if (strcmp(currmname, "D3") == 0 && Current_mission.cur_level == 16) {
+        snprintf(desc, sizeof(desc), "%s Secret Level 01", currmname);
+      } else if (strcmp(currmname, "D3") == 0 && Current_mission.cur_level == 17) {
+          snprintf(desc, sizeof(desc), "%s Secret Level 02", currmname);
       } else {
-          // If slot is not occupied, prefill with current level number
           snprintf(desc, sizeof(desc), "%s Level %02d", currmname, Current_mission.cur_level);
-        }
+      }
 
       reenter_save:
       if (DoEditDialog(TXT_DESCRIPTION, desc, sizeof(desc) - 1)) {
