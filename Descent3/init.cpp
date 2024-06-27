@@ -991,12 +991,6 @@ void IntroScreen();
 #define INIT_MESSAGE(c) InitMessage(c)
 #endif
 
-#if defined(EDITOR) || defined(NEWEDITOR)
-bool Running_editor = true; // didn't we have a variable like this somewhere
-#else
-bool Running_editor = false; // didn't we have a variable like this somewhere
-#endif
-
 static bool Init_in_editor = false;
 
 // used to update load bar.
@@ -1004,7 +998,6 @@ static void SetInitMessageLength(const char *c, float amount); // portion of tot
 extern void UpdateInitMessage(float amount);                   // amount is 0 to 1
 static void SetupTempDirectory(void);
 static void DeleteTempFiles(void);
-static void PreGameCdCheck();
 static void InitIOSystems(bool editor);
 static void InitStringTable();
 static void InitGraphics(bool editor);
@@ -1013,7 +1006,7 @@ static void InitDedicatedServer();
 
 #define TEMPBUFFERSIZE 256
 
-// If there's a joystick, this is the stick number.  Else, this is -1
+// If there's a joystick, this is the stick number. Else, this is -1
 char App_ddvid_subsystem[8];
 
 //	other info.
@@ -1045,20 +1038,11 @@ int merc_hid = -1;
 void PreInitD3Systems() {
   // initialize error system
   bool debugging = false;
-
 #ifndef RELEASE
-
   debugging = (FindArg("-debug") != 0);
-
   if (FindArg("-logfile"))
     Debug_Logfile("d3.log");
-
 #endif
-
-#ifdef DAJ_DEBUG
-  debugging = true;
-#endif
-
   error_Init(debugging, false, PRODUCT_NAME);
 
   if (FindArg("-lowmem"))
@@ -1126,30 +1110,17 @@ void SaveGameSettings() {
 
   snprintf(tempbuffer, sizeof(tempbuffer), "%f", Render_preferred_state.gamma);
   Database->write("RS_gamma", tempbuffer, strlen(tempbuffer) + 1);
-
   snprintf(tempbuffer, sizeof(tempbuffer), "%f", Sound_system.GetMasterVolume());
   Database->write("SND_mastervol", tempbuffer, strlen(tempbuffer) + 1);
-
   snprintf(tempbuffer, sizeof(tempbuffer), "%f", D3MusicGetVolume());
   Database->write("MUS_mastervol", tempbuffer, strlen(tempbuffer) + 1);
-
   snprintf(tempbuffer, sizeof(tempbuffer), "%f", Detail_settings.Pixel_error);
   Database->write("RS_pixelerror", tempbuffer, strlen(tempbuffer) + 1);
-
   snprintf(tempbuffer, sizeof(tempbuffer), "%f", Detail_settings.Terrain_render_distance / ((float)TERRAIN_SIZE));
   Database->write("RS_terraindist", tempbuffer, strlen(tempbuffer) + 1);
-
   Database->write("Dynamic_Lighting", Detail_settings.Dynamic_lighting);
-
-#ifdef _DEBUG
-  Database->write("Outline_mode", Outline_mode);
-  Database->write("Lighting_on", Lighting_on);
-  Database->write("Render_floating_triggers", Render_floating_triggers);
-#endif
-
   Database->write("TerrLeveling", Default_player_terrain_leveling);
   Database->write("RoomLeveling", Default_player_room_leveling);
-  // Database->write("Terrain_casting",Detail_settings.Terrain_casting);
   Database->write("Specmapping", Detail_settings.Specular_lighting);
   Database->write("FastHeadlight", Detail_settings.Fast_headlight_on);
   Database->write("MirrorSurfaces", Detail_settings.Mirrored_surfaces);
@@ -1162,19 +1133,15 @@ void SaveGameSettings() {
   Database->write("DetailProcedurals", Detail_settings.Procedurals_enabled);
   Database->write("DetailObjectComp", Detail_settings.Object_complexity);
   Database->write("DetailPowerupHalos", Detail_settings.Powerup_halos);
-
   Database->write("RS_resolution", Game_video_resolution);
-
   Database->write("RS_bitdepth", Render_preferred_bitdepth);
   Database->write("RS_bilear", Render_preferred_state.filtering);
   Database->write("RS_mipping", Render_preferred_state.mipping);
   Database->write("RS_color_model", Render_state.cur_color_model);
   Database->write("RS_light", Render_state.cur_light_state);
   Database->write("RS_texture_quality", Render_state.cur_texture_quality);
-
   Database->write("VoicePowerup", PlayPowerupVoice);
   Database->write("VoiceAll", PlayVoices);
-
   // Write out force feedback
   Database->write("EnableJoystickFF", D3Use_force_feedback);
   Database->write("ForceFeedbackAutoCenter", D3Force_auto_center);
@@ -1185,17 +1152,9 @@ void SaveGameSettings() {
     D3Force_gain = 1.0f;
   force_gain = (uint8_t)((100.0f * D3Force_gain) + 0.5f);
   Database->write("ForceFeedbackGain", force_gain);
-
-#ifndef RELEASE // never save this value out in release.
-  Database->write("SoundMixer", Sound_mixer);
-  Database->write("PreferredRenderer", PreferredRenderer);
-#endif
-
   tempint = Sound_quality;
   Database->write("SoundQuality", tempint);
-
   Database->write("SoundQuantity", Sound_system.GetLLSoundQuantity());
-
   if (Default_pilot[0] != '\0')
     Database->write("Default_pilot", Default_pilot, strlen(Default_pilot) + 1);
   else
@@ -1209,12 +1168,6 @@ void LoadGameSettings() {
   char tempbuffer[TEMPBUFFERSIZE], *stoptemp;
   int templen = TEMPBUFFERSIZE;
   int tempint;
-
-  // set defaults
-#ifdef _DEBUG
-  Outline_mode = OM_ALL;
-  Lighting_on = true;
-#endif
 
   Detail_settings.Specular_lighting = false;
   Detail_settings.Dynamic_lighting = true;
@@ -1285,12 +1238,6 @@ void LoadGameSettings() {
   templen = TEMPBUFFERSIZE;
   Database->read_int("Dynamic_Lighting", &Detail_settings.Dynamic_lighting);
 
-#ifdef _DEBUG
-  Database->read_int("Outline_mode", &Outline_mode);
-  Database->read("Lighting_on", &Lighting_on);
-  Database->read("Render_floating_triggers", &Render_floating_triggers);
-#endif
-
   Database->read_int("TerrLeveling", &Default_player_terrain_leveling);
   Database->read_int("RoomLeveling", &Default_player_room_leveling);
   Database->read("Specmapping", &Detail_settings.Specular_lighting);
@@ -1301,7 +1248,6 @@ void LoadGameSettings() {
   Database->read_int("RS_color_model", &Render_state.cur_color_model);
   Database->read_int("RS_light", &Render_state.cur_light_state);
   Database->read_int("RS_texture_quality", &Render_state.cur_texture_quality);
-  // force feedback stuff
   Database->read("EnableJoystickFF", &D3Use_force_feedback);
   Database->read("ForceFeedbackAutoCenter", &D3Force_auto_center);
   uint8_t force_gain;
@@ -1314,17 +1260,8 @@ void LoadGameSettings() {
   Database->read("FastHeadlight", &Detail_settings.Fast_headlight_on);
   Database->read("MirrorSurfaces", &Detail_settings.Mirrored_surfaces);
   Database->read_int("RS_vsync", &Render_preferred_state.vsync_on);
-
-  if (FindArg("-vsync"))
-    Render_preferred_state.vsync_on = true;
-
-  //@@	// Base missile camera if in wrong window
-  //@@	if (Missile_camera_window==SVW_CENTER)
-  //@@		Missile_camera_window=SVW_LEFT;
-
   Database->read("VoicePowerup", &PlayPowerupVoice);
   Database->read("VoiceAll", &PlayVoices);
-
   Database->read("DetailScorchMarks", &Detail_settings.Scorches_enabled);
   Database->read("DetailWeaponCoronas", &Detail_settings.Weapon_coronas_enabled);
   Database->read("DetailFog", &Detail_settings.Fog_enabled);
@@ -1332,17 +1269,16 @@ void LoadGameSettings() {
   Database->read("DetailProcedurals", &Detail_settings.Procedurals_enabled);
   Database->read_int("DetailObjectComp", &tempint);
   Detail_settings.Object_complexity = tempint;
-  if (Detail_settings.Object_complexity < 0 || Detail_settings.Object_complexity > 2)
+  if (Detail_settings.Object_complexity < 0 || Detail_settings.Object_complexity > 2) {
     Detail_settings.Object_complexity = 1;
-
+  }
   Database->read("DetailPowerupHalos", &Detail_settings.Powerup_halos);
-
-  if (Database->read_int("SoundMixer", &tempint))
+  if (Database->read_int("SoundMixer", &tempint)) {
     Sound_mixer = tempint;
-
-  if (Database->read_int("SoundQuality", &tempint))
+  }
+  if (Database->read_int("SoundQuality", &tempint)) {
     Sound_quality = tempint;
-
+  }
   if (Database->read_int("SoundQuantity", &tempint)) {
     Sound_system.SetLLSoundQuantity(tempint);
   }
@@ -1356,8 +1292,7 @@ void LoadGameSettings() {
   int len = _MAX_PATH;
   Database->read("Default_pilot", Default_pilot, &len);
 
-  // Now that we have read in all the data, set the detail level if it is a predef setting (custom is ignored in
-  // function)
+  // Now that we have read in all the data, set the detail level if it is a predef setting (custom is ignored in function)
 
   int level;
   level = DETAIL_LEVEL_MED;
@@ -1430,22 +1365,10 @@ void InitIOSystems(bool editor) {
 
   Descent->set_defer_handler(D3DeferHandler);
 
-#ifndef RELEASE
-  if (!editor && !FindArg("-windowed")) {
-    if (Dedicated_server) {
-      ddio_MouseMode(MOUSE_STANDARD_MODE);
-    } else {
-      ddio_MouseMode(MOUSE_EXCLUSIVE_MODE);
-    }
-  }
-#else
-  ddio_MouseMode(MOUSE_EXCLUSIVE_MODE);
-#endif
-
   //	do io init stuff
   io_info.obj = Descent;
   io_info.joy_emulation = (bool)((FindArg("-alternatejoy") == 0) && (FindArg("-directinput") == 0));
-  io_info.key_emulation = true; //(bool)(FindArg("-slowkey")!=0); WIN95: DirectInput is flaky for some keys.
+  io_info.key_emulation = true;
   INIT_MESSAGE(("Initializing DDIO systems."));
   if (!ddio_Init(&io_info)) {
     Error("I/O initialization failed.");
@@ -1483,14 +1406,13 @@ void InitIOSystems(bool editor) {
   char fullname[_MAX_PATH];
 
 #ifdef DEMO
-  // DAJ	d3_hid = cf_OpenLibrary("d3demo.hog");
   ddio_MakePath(fullname, LocalD3Dir, "d3demo.hog", NULL);
 #else
   ddio_MakePath(fullname, LocalD3Dir, "d3.hog", NULL);
 #endif
   d3_hid = cf_OpenLibrary(fullname);
 
-  // JC: Steam release uses extra1.hog instead of extra.hog, so try loading it first
+  // Steam release uses extra1.hog instead of extra.hog, so try loading it first
   // Open this file if it's present for stuff we might add later
   ddio_MakePath(fullname, LocalD3Dir, "extra1.hog", NULL);
   extra_hid = cf_OpenLibrary(fullname);
@@ -1499,7 +1421,7 @@ void InitIOSystems(bool editor) {
     extra_hid = cf_OpenLibrary(fullname);
   }
 
-  // JC: Steam release uses extra.hog instead of merc.hog, so try loading it last (so we don't conflict with the above)
+  // Steam release uses extra.hog instead of merc.hog, so try loading it last (so we don't conflict with the above)
   // Open mercenary hog if it exists
   ddio_MakePath(fullname, LocalD3Dir, "merc.hog", NULL);
   merc_hid = cf_OpenLibrary(fullname);
@@ -1513,7 +1435,7 @@ void InitIOSystems(bool editor) {
   extra13_hid = cf_OpenLibrary(fullname);
 
   // last library opened is the first to be searched for dynamic libs, so put
-  // this one at the end to find our newly build script libraries first
+  // this one at the end to find our newly built script libraries first
   ddio_MakePath(fullname, LocalD3Dir, PRIMARY_HOG, NULL);
   sys_hid = cf_OpenLibrary(fullname);
 
@@ -1667,13 +1589,6 @@ void UpdateInitMessage(float amount) {
   if (Init_in_editor)
     return;
   InitMessage(Init_messagebar_text, (amount * Init_messagebar_portion) + Init_messagebar_offset);
-/*
-  mprintf(0, "amt=%.2f, portion=%.2f offs=%.2f, prog=%.2f\n",
-          amount,
-          Init_messagebar_portion,
-          Init_messagebar_offset,
-          (amount*Init_messagebar_portion)+Init_messagebar_offset);
-*/
 }
 
 void InitMessage(const char *c, float progress) {
@@ -1759,7 +1674,6 @@ void ShowStaticScreen(char *bitmap_filename, bool timed = false, float delay_tim
 #endif
 
 void IntroScreen() {
-// #if (defined(OEM) || defined(DEMO) )
 #ifdef DEMO
   ShowStaticScreen("tantrum.ogf", true, 3.0);
   ShowStaticScreen("outrage.ogf", true, 3.0);
@@ -1771,7 +1685,7 @@ void IntroScreen() {
 #else
   int bm_handle = bm_AllocLoadFileBitmap("oemmenu.ogf", 0);
 #endif
-  mprintf(0, "Intro screen!.\n");
+  mprintf(0, "Intro screen!\n");
 
   if (bm_handle > -1) {
     if (!bm_CreateChunkedBitmap(bm_handle, &Title_bitmap))
@@ -1910,11 +1824,6 @@ void InitD3Systems2(bool editor) {
   // Initialize In-Game Cinematics system
   Cinematic_Init();
 
-//	initialize slewing
-#ifdef EDITOR
-  SlewControlInit();
-#endif
-
   int tables_loaded = 0;
 
   //	load in all data headers.
@@ -1957,10 +1866,7 @@ void InitD3Systems2(bool editor) {
   PPic_InitDatabase();
 
   //	Set next logical function for game.
-  if (editor)
-    SetFunctionMode(EDITOR_MODE);
-  else
-    SetFunctionMode(MENU_MODE);
+  SetFunctionMode(MENU_MODE);
 
   if (Dedicated_server)
     InitDedicatedServer();
@@ -2132,7 +2038,6 @@ void ShutdownD3() {
   ddio_Close();
 }
 
-// TODO: MTS: unused in project
 //	This function restarts all game systems
 void RestartD3() {
   ddio_init_info io_info;

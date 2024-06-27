@@ -440,7 +440,6 @@
 void mng_WriteLightingChunk(light_info *lighting_info, CFILE *outfile);
 void mng_ReadLightingChunk(light_info *lighting_info, CFILE *infile);
 
-extern bool Running_editor; // in init.cpp
 extern char *TablefileNameOverride;
 
 // Sets a page structure to default values
@@ -1887,10 +1886,6 @@ int mng_SetAndLoadGeneric(mngs_generic_page *genericpage, CFILE *infile) {
         }
       }
     }
-  }
-
-  if (Running_editor) {
-    f_ai = f_weapons = f_anim = true;
   }
 
   n = AllocObjectID(genericpage->objinfo_struct.type, f_anim, f_weapons, f_ai);
