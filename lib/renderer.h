@@ -314,7 +314,9 @@ class oeApplication;
 #define REPLACEMENT_COLOR 0x07C0
 
 extern int Triangles_drawn;
+
 extern int winw, winh;
+extern float scalew, scaleh;
 
 // Is this hardware or software rendered?
 enum renderer_type {
@@ -453,7 +455,6 @@ struct rendering_state {
 
   int clip_x1, clip_x2, clip_y1, clip_y2;
   int screen_width, screen_height;
-
 };
 
 struct renderer_preferred_state {

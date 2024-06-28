@@ -68,6 +68,7 @@ extern uint8_t Renderer_initted;
 renderer_type Renderer_type = RENDERER_OPENGL;
 int WindowGL = 0;
 int winw, winh = 0;
+float scalew, scaleh = 0.0f;
 
 extern matrix Unscaled_matrix;
 extern vector View_position;
@@ -1901,6 +1902,10 @@ void rend_ResetCache(void) {
 // Fills a rectangle on the display
 void rend_FillRect(ddgr_color color, int x1, int y1, int x2, int y2) {
   SDL_GetWindowSize(GSDLWindow, &winw, &winh);
+  
+  // Calculate the scale factors
+  scalew = (float)winw / gpu_state.screen_width;
+  scaleh = (float)winh / gpu_state.screen_height;
 
   // If square, change to rectangle
   if (winw == winh) {
@@ -1908,23 +1913,19 @@ void rend_FillRect(ddgr_color color, int x1, int y1, int x2, int y2) {
     winh = new_height;
   }
 
-  // Calculate the screen width and height from gpu_state
-  int screen_width = gpu_state.screen_width;
-  int screen_height = gpu_state.screen_height;
-
   // Compute the scaled coordinates and dimensions
-  int scaled_x1 = x1 * winw / screen_width;
-  int scaled_y1 = y1 * winh / screen_height;
-  int scaled_x2 = x2 * winw / screen_width;
-  int scaled_y2 = y2 * winh / screen_height;
+  int scaled_x1 = x1 * winw / gpu_state.screen_width;
+  int scaled_y1 = y1 * winh / gpu_state.screen_height;
+  int scaled_x2 = x2 * winw / gpu_state.screen_width;
+  int scaled_y2 = y2 * winh / gpu_state.screen_height;
 
   // Calculate the width and height of the scaled rectangle
   int scaled_width = scaled_x2 - scaled_x1;
   int scaled_height = scaled_y2 - scaled_y1;
 
   // Adjust the rectangle position and dimensions according to the clipping region
-  scaled_x1 += gpu_state.clip_x1 * winw / screen_width;
-  scaled_y1 += gpu_state.clip_y1 * winh / screen_height;
+  scaled_x1 += gpu_state.clip_x1 * winw / gpu_state.screen_width;
+  scaled_y1 += gpu_state.clip_y1 * winh / gpu_state.screen_height;
 
   // Get color components
   int r = GR_COLOR_RED(color);
@@ -1940,10 +1941,10 @@ void rend_FillRect(ddgr_color color, int x1, int y1, int x2, int y2) {
   dglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   // Restore the original scissor box
-  int clip_x1 = gpu_state.clip_x1 * winw / screen_width;
-  int clip_y1 = gpu_state.clip_y1 * winh / screen_height;
-  int clip_x2 = gpu_state.clip_x2 * winw / screen_width;
-  int clip_y2 = gpu_state.clip_y2 * winh / screen_height;
+  int clip_x1 = gpu_state.clip_x1 * winw / gpu_state.screen_width;
+  int clip_y1 = gpu_state.clip_y1 * winh / gpu_state.screen_height;
+  int clip_x2 = gpu_state.clip_x2 * winw / gpu_state.screen_width;
+  int clip_y2 = gpu_state.clip_y2 * winh / gpu_state.screen_height;
   int clip_width = clip_x2 - clip_x1;
   int clip_height = clip_y2 - clip_y1;
 
