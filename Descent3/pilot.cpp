@@ -796,8 +796,8 @@ struct pilot_edit_menu {
   newuiSheet *sheet;
 
   int *difficulty;
-  bool *profanity;
-  bool *audiotaunts;
+  //bool *profanity;
+  //bool *audiotaunts;
   char *pilot_name;
 
   newuiSheet *setup(newuiMenu *menu) {
@@ -809,33 +809,25 @@ struct pilot_edit_menu {
 
     // difficulty
     sheet->NewGroup(TXT_PLTDIFFICULT, 55, 12);
-#if 1 // ndef DEMO
     difficulty = sheet->AddFirstLongRadioButton(TXT_TRAINEE);
     sheet->AddLongRadioButton(TXT_ROOKIE);
     sheet->AddLongRadioButton(TXT_HOTSHOT);
     sheet->AddLongRadioButton(TXT_ACE);
     sheet->AddLongRadioButton(TXT_INSANE);
     *difficulty = 0;
-#else
-    difficulty = sheet->AddFirstLongRadioButton(TXT_TRAINEE);
-    sheet->AddLongRadioButton(TXT_HOTSHOT);
-    *difficulty = 0;
-#endif
+
     sheet->NewGroup(TXT_CONTROLSCONFIG, 55, 93);
     sheet->AddLongButton(TXT_CPYKEYCONF, IDP_COPYCONTROLS);
     sheet->AddLongButton(TXT_CUSTKEYB, IDP_CONFIGKEYB);
     sheet->AddLongButton(TXT_CUSTGAMEC, IDP_CONFIGCONT);
-
+/*
     sheet->NewGroup(TXT_MULTIPLAYERCONFIG, 55, 150);
-#if (!defined(OEM) && !defined(DEMO))
     sheet->AddLongButton(TXT_SELPILOTPIC, IDP_CHOOSEPIC);
-#endif
     sheet->AddLongButton(TXT_SHIPCUSTOMIZE, IDP_SHIPCONFIG);
-
     sheet->NewGroup(TXT_MISCELLANEOUS, 55, 195);
     profanity = sheet->AddLongCheckBox(TXT_PROFFILTER);
     audiotaunts = sheet->AddLongCheckBox(TXT_AUDIOTAUNTS);
-
+*/
     return sheet;
   };
 
@@ -867,7 +859,7 @@ void PilotListSelectChangeCallback(int index) {
   pilot *Pilot = &working_pilot;
   char name[PILOT_STRING_SIZE];
   uint8_t difficulty;
-  bool profanity, audiotaunts;
+  //bool profanity, audiotaunts;
   bool in_edit = false;
 
   if (PilotChooseDialogInfo.menu->GetCurrentOption() == IDP_EDIT) {
@@ -889,12 +881,12 @@ void PilotListSelectChangeCallback(int index) {
       // which keeps us from bringing deleted pilots
       // back from the dead.
       difficulty = *PilotChooseDialogInfo.edit->difficulty;
-      profanity = *PilotChooseDialogInfo.edit->profanity;
-      audiotaunts = *PilotChooseDialogInfo.edit->audiotaunts;
+      //profanity = *PilotChooseDialogInfo.edit->profanity;
+      //audiotaunts = *PilotChooseDialogInfo.edit->audiotaunts;
 
-      Pilot->set_profanity_filter(profanity);
+      //Pilot->set_profanity_filter(profanity);
       Pilot->set_difficulty(difficulty);
-      Pilot->set_audiotaunts(audiotaunts);
+      //Pilot->set_audiotaunts(audiotaunts);
       PltWriteFile(&working_pilot);
       mprintf(0, "Pilot saved\n");
     } else {
@@ -910,11 +902,11 @@ void PilotListSelectChangeCallback(int index) {
   // Setup all values
   ///////////////////////////////
   Pilot->get_difficulty(&difficulty);
-  Pilot->get_profanity_filter(&profanity);
-  Pilot->get_audiotaunts(&audiotaunts);
+  //Pilot->get_profanity_filter(&profanity);
+  //Pilot->get_audiotaunts(&audiotaunts);
   *PilotChooseDialogInfo.edit->difficulty = difficulty;
-  *PilotChooseDialogInfo.edit->profanity = profanity;
-  *PilotChooseDialogInfo.edit->audiotaunts = audiotaunts;
+  //*PilotChooseDialogInfo.edit->profanity = profanity;
+  //*PilotChooseDialogInfo.edit->audiotaunts = audiotaunts;
 
   if (in_edit)
     PilotChooseDialogInfo.edit->sheet->UpdateChanges();
