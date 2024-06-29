@@ -796,10 +796,8 @@ struct pilot_edit_menu {
   newuiSheet *sheet;
 
   int *difficulty;
-#ifndef Release
   bool *profanity;
   bool *audiotaunts;
-#endif
   char *pilot_name;
 
   newuiSheet *setup(newuiMenu *menu) {
@@ -822,14 +820,14 @@ struct pilot_edit_menu {
     sheet->AddLongButton(TXT_CPYKEYCONF, IDP_COPYCONTROLS);
     sheet->AddLongButton(TXT_CUSTKEYB, IDP_CONFIGKEYB);
     sheet->AddLongButton(TXT_CUSTGAMEC, IDP_CONFIGCONT);
-#ifndef Release
+
     sheet->NewGroup(TXT_MULTIPLAYERCONFIG, 55, 150);
     sheet->AddLongButton(TXT_SELPILOTPIC, IDP_CHOOSEPIC);
     sheet->AddLongButton(TXT_SHIPCUSTOMIZE, IDP_SHIPCONFIG);
     sheet->NewGroup(TXT_MISCELLANEOUS, 55, 195);
     profanity = sheet->AddLongCheckBox(TXT_PROFFILTER);
     audiotaunts = sheet->AddLongCheckBox(TXT_AUDIOTAUNTS);
-#endif
+
     return sheet;
   };
 
@@ -861,9 +859,7 @@ void PilotListSelectChangeCallback(int index) {
   pilot *Pilot = &working_pilot;
   char name[PILOT_STRING_SIZE];
   uint8_t difficulty;
-#ifndef Release
   bool profanity, audiotaunts;
-#endif
   bool in_edit = false;
 
   if (PilotChooseDialogInfo.menu->GetCurrentOption() == IDP_EDIT) {
@@ -885,13 +881,11 @@ void PilotListSelectChangeCallback(int index) {
       // which keeps us from bringing deleted pilots
       // back from the dead.
       difficulty = *PilotChooseDialogInfo.edit->difficulty;
-    #ifndef Release
       profanity = *PilotChooseDialogInfo.edit->profanity;
       audiotaunts = *PilotChooseDialogInfo.edit->audiotaunts;
 
       Pilot->set_profanity_filter(profanity);
       Pilot->set_audiotaunts(audiotaunts);
-    #endif
       Pilot->set_difficulty(difficulty);
       PltWriteFile(&working_pilot);
       mprintf(0, "Pilot saved\n");
@@ -908,12 +902,10 @@ void PilotListSelectChangeCallback(int index) {
   // Setup all values
   ///////////////////////////////
   Pilot->get_difficulty(&difficulty);
-#ifndef Release
   Pilot->get_profanity_filter(&profanity);
   Pilot->get_audiotaunts(&audiotaunts);
   *PilotChooseDialogInfo.edit->profanity = profanity;
   *PilotChooseDialogInfo.edit->audiotaunts = audiotaunts;
-#endif
   *PilotChooseDialogInfo.edit->difficulty = difficulty;
 
   if (in_edit)

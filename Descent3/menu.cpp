@@ -105,8 +105,7 @@ int MainMenu() {
   // #endif
   main_menu.AddItem(IDV_OPTIONS, KEY_O, TXT_MENUOPTIONS);
   main_menu.AddItem(IDV_PILOT, KEY_P, TXT_MENUPILOTS);
-  //main_menu.AddItem(IDV_MULTIPLAYER, KEY_M, TXT_MENUMULTIPLAYER);
-  //main_menu.AddItem(IDV_MULTIPLAYER, KEY_M, TXT_MENUMULTIPLAYER);
+  main_menu.AddItem(IDV_MULTIPLAYER, KEY_M, TXT_MENUMULTIPLAYER);
   main_menu.AddItem(IDV_CREDITS, KEY_C, TXT_MENUCREDITS);
   main_menu.AddItem(IDV_QUIT, KEY_Q, TXT_MENUQUIT, MM_ENDMENU_TYPE);
 #ifdef _DEBUG
@@ -208,7 +207,7 @@ int MainMenu() {
       DoWaitMessage(true);
       PilotSelect();
       break;
-    /* case IDV_MULTIPLAYER: {
+     case IDV_MULTIPLAYER: {
       IsCheater = false;
       main_menu.SetMusicRegion(MULTI_MUSIC_REGION);
       mprintf(0, "Multiplayer!\n");
@@ -222,7 +221,7 @@ int MainMenu() {
         exit_menu = 1;
         SetFunctionMode(GAME_MODE);
       }
-    } break; */
+    } break;
     case IDV_PLAYDEMO:
       if (LoadDemoDialog()) {
         SetGameMode(GM_NORMAL);
