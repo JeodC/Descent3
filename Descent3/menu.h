@@ -95,7 +95,7 @@ inline const char* RetributionNames[] = {
   "Mars Orbit - CED Expediator Flagship Carrier",     // Level 13
   "Earth Orbit - CED Strategic Operations Platform",  // Level 14
   "Venus - Dravis' Stronghold",                       // Level 15
-  "Orion Zero",                                       // Secret 1
+  "Origin Zero",                                       // Secret 1
   "H.V.W.R.C."                                        // Secret 2
 };
 
