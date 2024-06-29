@@ -78,6 +78,12 @@ int DisplayLevelWarpDlg(int max_level);
 // displays a list of levels associated with the selected mission
 int DisplayLevelSelectDlg(int max_level);
 
+// Array of special missions
+inline const char* SpecialMissions[] = {
+  "d3.mn3",
+  "merc.mn3"
+};
+
 // Array of level names for Descent 3: Retribution
 inline const char* RetributionNames[] = {
   "Deimos - PTMC Data Retention Center",              // Level 1
