@@ -598,6 +598,19 @@ int opengl_Setup(oeApplication *app, int *width, int *height) {
     GSDLWindow = NULL;
     return 0;
   }
+
+  SDL_GetWindowSize(GSDLWindow, &winw, &winh);
+  
+  // Calculate the scale factors
+  scalew = (float)winw / gpu_state.screen_width;
+  scaleh = (float)winh / gpu_state.screen_height;
+
+  // If square, change to rectangle
+  if (winw == winh) {
+    int new_height = (int)(winw * 0.75f);
+    winh = new_height;
+  }
+  
   LoadOpenGLFunctions();
 
   if (!FindArg("-nomousegrab")) {
@@ -1901,18 +1914,6 @@ void rend_ResetCache(void) {
 
 // Fills a rectangle on the display
 void rend_FillRect(ddgr_color color, int x1, int y1, int x2, int y2) {
-  SDL_GetWindowSize(GSDLWindow, &winw, &winh);
-  
-  // Calculate the scale factors
-  scalew = (float)winw / gpu_state.screen_width;
-  scaleh = (float)winh / gpu_state.screen_height;
-
-  // If square, change to rectangle
-  if (winw == winh) {
-    int new_height = (int)(winw * 0.75f);
-    winh = new_height;
-  }
-
   // Compute the scaled coordinates and dimensions
   int scaled_x1 = x1 * winw / gpu_state.screen_width;
   int scaled_y1 = y1 * winh / gpu_state.screen_height;
