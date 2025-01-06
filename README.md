@@ -15,9 +15,8 @@ Run these commands:
 
 ```sh
 sudo apt update
-sudo apt install -y --no-install-recommends git ninja-build cmake g++ libsdl2-dev zlib1g-dev
-git clone https://github.com/JeodC/Descent3
-cd Descent3
+sudo apt install -y --no-install-recommends git ninja-build cmake g++ libsdl2-dev zlib1g-dev libncurses5-dev
+git clone https://github.com/JeodC/Descent3 && cd Descent3
 cmake --preset linux
 cmake --build --preset linux --config [Debug|Release]
 ```
@@ -26,7 +25,7 @@ You can use the following commands during the `cmake --preset linux` step:
 
 `-D ENABLE_LOGGER=[ON|OFF]` - This enables mprintf statements in Debug builds, using the -logfile argument. Defaults to ON.  
 `-D ENABLE_NETGAMES=[ON|OFF]` - This enables building the netgames, which go in the `netgames` directory. Defaults to OFF.  
-`-D ENABLE_NETGAMES=[ON|OFF]` - This enables building the level scripts (`d3-linux.hog`). You usually don't have to build this very often. Defaults to OFF.  
+`-D ENABLE_SCRIPTS=[ON|OFF]` - This enables building the level scripts (`d3-linux.hog`). You usually don't have to build this very often. Defaults to OFF.  
 
 
 Once CMake finishes, the built files will be put in `builds/linux/Descent3/Debug` or `builds/linux/Descent3/Release`.
