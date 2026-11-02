@@ -669,6 +669,10 @@
 #include "psrand.h"
 #include "polymodel.h"
 #include "init.h"
+#include "demofile.h"
+#include "hlsoundlib.h"
+#include "objinfo.h"
+#include "sounds.h"
 
 void MultiProcessShipChecksum(MD5 *md5, int ship_index);
 
@@ -1961,7 +1965,18 @@ void MultiCheckToRespawnPowerups() {
       if (objnum > -1)
         MultiSendObject(&Objects[objnum], 1);
 
-      InitObjectScripts(&Objects[objnum]);
+      // #region RHH [Bugfix] No Objects[-1] when ObjCreate fails, and the ambient sound restarts, as a matcen's does
+      if (objnum > -1) {
+        InitObjectScripts(&Objects[objnum]);
+        int ambient_sound = Object_info[Objects[objnum].id].sounds[GSI_AMBIENT];
+        if (ambient_sound != SOUND_NONE_INDEX) {
+          Sound_system.Play3dSound(ambient_sound, SND_PRIORITY_LOWEST, &Objects[objnum]);
+          MultiPlay3dSound(ambient_sound, objnum, SND_PRIORITY_LOW);
+          if (Demo_flags == DF_RECORDING)
+            DemoWrite3DSound(ambient_sound, objnum, SND_PRIORITY_LOW);
+        }
+      }
+      // #endregion
       Powerup_respawn[t].objnum = objnum;
 
       // Now erase this powerup from our timer info
