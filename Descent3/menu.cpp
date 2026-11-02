@@ -669,6 +669,7 @@
 #include "gamesequence.h"
 #include "ddio.h"
 #include "demofile.h"
+#include "difficulty.h"
 #include "pilot.h"
 #include "LoadLevel.h"
 #include "stringtable.h"
@@ -764,6 +765,8 @@ int MainMenu() {
       std::string pfilename = std::string(GameArgs[pilotarg + 1]) + ".plt";
       Current_pilot.set_filename(pfilename);
       PltReadFile(&Current_pilot, true);
+      // RHH [Bugfix] PilotSelect sets this on the way out, and -pilot skips it
+      Current_pilot.get_difficulty(&ingame_difficulty);
     }
     first_time = false;
   }
