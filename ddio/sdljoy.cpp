@@ -74,6 +74,7 @@
 #include "args.h"
 #include "joystick.h"
 #include "log.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 //	---------------------------------------------------------------------------
 //	globals
@@ -200,6 +201,8 @@ static bool joy_InitStick(tJoystick joy, char *server_adr) {
     case 0:
       break;
     }
+    // Using Should hook, but ignoring return value, to be able to modify the stick's description
+    GameInteractor_Should(VB_JOY_INIT_STICK, true, (int)joy, stick, &caps);
     Joysticks[joy].caps = caps;
 
     LOG_DEBUG.printf("JOYSTICK: Initialized stick named [%s].", caps.name);
@@ -282,6 +285,8 @@ void joy_GetPos(tJoystick joy, tJoyPos *pos) {
   int i;
 
   memset(pos, 0, (sizeof(*pos)));
+  if (!GameInteractor_Should(VB_JOY_READ_STICK, true, (int)joy, pos))
+    return;
 
   //	retrieve joystick info from the net, or locally.
   stick = Joysticks[joy].handle;

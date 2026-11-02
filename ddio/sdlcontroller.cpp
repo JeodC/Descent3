@@ -51,6 +51,7 @@
 #include "inffile.h"
 #include "sdlcontroller.h"
 #include "log.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 // Sorry! This is needed for the semi-hacky mouselook support
 #include "descent.h"
@@ -86,9 +87,13 @@ sdlgameController::sdlgameController(int num_funcs, ct_function *funcs) : gameCo
 //	these functions suspend or resume any controller reading.  this is really only useful for
 //	preemptive controller polling, but they should be used to activate and deactivate controller
 //	reading.
-void sdlgameController::suspend() { m_Suspended = 1; }
+void sdlgameController::suspend() {
+  m_Suspended = 1;
+  GameInteractor_ExecuteOnControllerSuspend();
+}
 void sdlgameController::resume() {
   m_Suspended = 0;
+  GameInteractor_ExecuteOnControllerResume();
   m_frame_timer_ms = -1;
   m_frame_time = 1.0f;
 }
@@ -174,6 +179,8 @@ const char *sdlgameController::get_binding_text(ct_type type, uint8_t ctrl, uint
   case ctAxis: {
     ASSERT(bind < NUM_AXISBINDSTRINGS);
     str = Ctltext_AxisBindings[bind];
+    // Using Should hook, but ignoring return value, to be able to name the axis
+    GameInteractor_Should(VB_CONTROLLER_BINDING_TEXT, true, (int)type, m_ControlList[ctrl].id, (int)bind, &str);
     if ((ctrl - 2) > 0) {
       snprintf(binding_text, sizeof(binding_text), "J%d:%s", (ctrl - 2) + 1, str);
     } else {
@@ -190,6 +197,8 @@ const char *sdlgameController::get_binding_text(ct_type type, uint8_t ctrl, uint
   case ctButton: {
     ASSERT(bind < NUM_BTNBINDSTRINGS);
     str = Ctltext_BtnBindings[bind];
+    // Using Should hook, but ignoring return value, to be able to name the button
+    GameInteractor_Should(VB_CONTROLLER_BINDING_TEXT, true, (int)type, m_ControlList[ctrl].id, (int)bind, &str);
     if ((ctrl - 2) > 0) {
       snprintf(binding_text, sizeof(binding_text), "J%d:%s", (ctrl - 2) + 1, str);
     } else {

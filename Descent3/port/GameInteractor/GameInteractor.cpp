@@ -2,6 +2,14 @@
 
 GameInteractor *GameInteractor::Instance;
 
+void GameInteractor_ExecuteOnControllerResume() {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnControllerResume>();
+}
+
+void GameInteractor_ExecuteOnControllerSuspend() {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnControllerSuspend>();
+}
+
 void GameInteractor_ExecuteOnControlsProcessed() {
   GameInteractor::Instance->ExecuteHooks<GameInteractor::OnControlsProcessed>();
 }

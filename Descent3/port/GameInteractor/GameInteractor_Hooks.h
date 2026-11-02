@@ -17,6 +17,8 @@ struct SDL_Window;
 #endif
 
 extern "C" {
+void GameInteractor_ExecuteOnControllerResume();
+void GameInteractor_ExecuteOnControllerSuspend();
 void GameInteractor_ExecuteOnControlsProcessed();
 void GameInteractor_ExecuteOnDatabaseCreated();
 void GameInteractor_ExecuteOnLevelWarpListFilled(newuiListBox *list, int highestAllowed, int maxLevel);

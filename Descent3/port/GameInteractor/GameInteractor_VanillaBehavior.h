@@ -17,6 +17,18 @@ typedef enum {
   // ```c
   // true
   // ```
+  // A listener may change the name a joystick's axis or button shows in bindings.
+  // #### `args`
+  // - `int32_t` (type, ctAxis or ctButton)
+  // - `int32_t` (m_ControlList[ctrl].id, the joystick)
+  // - `int32_t` (bind, promoted from `uint8_t`)
+  // - `**const char` (str)
+  VB_CONTROLLER_BINDING_TEXT,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
   // Whether the weapon cycling buttons switch weapons this frame.
   // #### `args`
   // - `*ct_packet` (cycle_prim)
@@ -40,6 +52,15 @@ typedef enum {
   // #### `args`
   // - None
   VB_FULL_GAME_WINDOW,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether the game's event filter handles the event, rather than dropping it.
+  // #### `args`
+  // - `*SDL_Event` (event)
+  VB_GAME_HANDLES_SDL_EVENT,
 
   // #### `result`
   // ```c
@@ -70,6 +91,27 @@ typedef enum {
   // - `*float` (Hud_aspect_x)
   // - `*float` (Hud_aspect_y)
   VB_HUD_SCALE,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // A listener may change the stick's description.
+  // #### `args`
+  // - `int32_t` (joy)
+  // - `*SDL_Joystick` (stick)
+  // - `*tJoyInfo` (caps)
+  VB_JOY_INIT_STICK,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether the stick's axes and buttons are read the vanilla way, into a cleared pos.
+  // #### `args`
+  // - `int32_t` (joy)
+  // - `*tJoyPos` (pos)
+  VB_JOY_READ_STICK,
 
   // #### `result`
   // ```c

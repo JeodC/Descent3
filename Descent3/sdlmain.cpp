@@ -186,6 +186,8 @@ bool sdlMouseWheelFilter(const SDL_Event *event);
 bool sdlMouseMotionFilter(const SDL_Event *event);
 
 bool SDLCALL d3SDLEventFilter(void *userdata, SDL_Event *event) {
+  if (!GameInteractor_Should(VB_GAME_HANDLES_SDL_EVENT, true, event))
+    return false;
   switch (event->type) {
   case SDL_EVENT_KEY_UP:
   case SDL_EVENT_KEY_DOWN:

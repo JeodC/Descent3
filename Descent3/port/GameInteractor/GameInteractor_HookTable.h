@@ -1,3 +1,5 @@
+DEFINE_HOOK(OnControllerResume, ())
+DEFINE_HOOK(OnControllerSuspend, ())
 DEFINE_HOOK(OnControlsProcessed, ())
 DEFINE_HOOK(OnDatabaseCreated, ())
 DEFINE_HOOK(OnLevelWarpListFilled, (newuiListBox * list, int highestAllowed, int maxLevel))
