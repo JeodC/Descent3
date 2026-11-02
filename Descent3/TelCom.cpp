@@ -523,6 +523,7 @@
 #include "psrand.h"
 #include "controls.h"
 #include "d3music.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 #define FRAME_RATE 30.0f
 #define TCPE_TIME 0.5f
@@ -2094,7 +2095,7 @@ void TelcomRenderMouse(void) {
   rend_SetAlphaType(AT_CONSTANT + AT_TEXTURE);
   rend_SetAlphaValue(255);
 
-  if (TC_cursor > -1) {
+  if (TC_cursor > -1 && GameInteractor_Should(VB_SHOW_MOUSE_CURSOR, true)) {
     int mx, my;
     mx = Telcom_mouse_x;
     my = Telcom_mouse_y;

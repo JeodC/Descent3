@@ -173,6 +173,7 @@
 #include "pserror.h"
 #include "renderer.h"
 #include "Macros.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 constexpr float kDefaultMouseScale = 20;
 
@@ -526,7 +527,7 @@ int ui_DoFrame(tUIInput *input, bool doinput) {
 }
 //	hide and show cursor. effects are cumulative
 bool ui_ShowCursor() {
-  if (!UI_cursor_show) {
+  if (!UI_cursor_show && GameInteractor_Should(VB_SHOW_MOUSE_CURSOR, true)) {
     UI_cursor_show = 1;
     return false;
   }

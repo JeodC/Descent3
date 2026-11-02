@@ -110,6 +110,15 @@ typedef enum {
   // ```c
   // true
   // ```
+  // Whether menus and the TelCom show the mouse cursor.
+  // #### `args`
+  // - None
+  VB_SHOW_MOUSE_CURSOR,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
   // Whether the game opens the options menu, between frames.
   // #### `args`
   // - None
