@@ -237,6 +237,7 @@
 #include "config.h"
 #include "multi.h"
 #include "render.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 #include <algorithm>
 
@@ -873,6 +874,8 @@ void RenderHUDQuad(int x, int y, int w, int h, float u0, float v0, float u1, flo
 
   x = HUD_X(x);
   y = HUD_Y(y);
+  // Using Should hook, but ignoring return value, to be able to move it
+  GameInteractor_Should(VB_HUD_POSITION, true, &x, &y);
   w = HUD_X(w);
   h = HUD_Y(h);
 
@@ -910,6 +913,8 @@ void RenderHUDTextFlagsNoFormat(int flags, ddgr_color col, uint8_t alpha, int sa
 
   x = HUD_X(x);
   y = HUD_Y(y);
+  // Using Should hook, but ignoring return value, to be able to move it
+  GameInteractor_Should(VB_HUD_POSITION, true, &x, &y);
 
   for (i = 0; i < sat_count + 1; i++) {
     if (flags & HUDTEXT_CENTERED)
@@ -940,6 +945,8 @@ void RenderHUDTextFlags(int flags, ddgr_color col, uint8_t alpha, int sat_count,
 
   x = HUD_X(x);
   y = HUD_Y(y);
+  // Using Should hook, but ignoring return value, to be able to move it
+  GameInteractor_Should(VB_HUD_POSITION, true, &x, &y);
 
   for (i = 0; i < sat_count + 1; i++) {
     if (flags & HUDTEXT_CENTERED)

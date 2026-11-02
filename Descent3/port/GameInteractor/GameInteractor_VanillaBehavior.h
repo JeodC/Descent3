@@ -15,6 +15,26 @@ typedef enum {
 
   // #### `result`
   // ```c
+  // true
+  // ```
+  // A listener may move where the HUD draws an item, in screen pixels.
+  // #### `args`
+  // - `*int` (x)
+  // - `*int` (y)
+  VB_HUD_POSITION,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // A listener may change the HUD's scale from its 640x480 layout.
+  // #### `args`
+  // - `*float` (Hud_aspect_x)
+  // - `*float` (Hud_aspect_y)
+  VB_HUD_SCALE,
+
+  // #### `result`
+  // ```c
   // scalar > .01, or with || (robotobj->mtype.phys_info.flags & PF_LOCK_MASK) for a robot
   // ```
   // Whether a ship bumping a ship or a robot makes a sound, and lets the robots hear it.

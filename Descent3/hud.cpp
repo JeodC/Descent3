@@ -437,6 +437,7 @@
 #include "gamecinematics.h"
 #include "CtlCfgElem.h"
 #include "ctlconfig.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 //////////////////////////////////////////////////////////////////////////////
 //	constants
@@ -1210,6 +1211,8 @@ void RenderHUDFrame() {
   // determine hud rendering properties.
   Hud_aspect_x = (float)Game_window_w / DEFAULT_HUD_WIDTH;
   Hud_aspect_y = (float)Game_window_h / DEFAULT_HUD_HEIGHT;
+  // Using Should hook, but ignoring return value, to be able to modify the scale
+  GameInteractor_Should(VB_HUD_SCALE, true, &Hud_aspect_x, &Hud_aspect_y);
   Small_hud_flag = (((float)Game_window_w / (float)Max_window_w) <= 0.80f) ? true : false;
 
   //	render special missile hud if available
@@ -1303,6 +1306,8 @@ void RenderAuxHUDFrame() {
     // determine hud rendering properties.
     Hud_aspect_x = (float)Game_window_w / DEFAULT_HUD_WIDTH;
     Hud_aspect_y = (float)Game_window_h / DEFAULT_HUD_HEIGHT;
+    // Using Should hook, but ignoring return value, to be able to modify the scale
+    GameInteractor_Should(VB_HUD_SCALE, true, &Hud_aspect_x, &Hud_aspect_y);
 
     for (i = 0; i < MAX_HUD_ITEMS; i++) {
       if ((stat_mask & HUD_array[i].stat) && (HUD_array[i].flags & HUD_FLAG_SMALL)) {
