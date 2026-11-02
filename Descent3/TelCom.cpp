@@ -2549,7 +2549,6 @@ void TelComSetFocusOnEffect(int efxnum) {
  *	This should be called once a frame, it will handle all events in the TelCom system and send off any system
  *	events to the effects/buttons
  */
-#define TELCOM_FRAMERATE_CAP 25.0f
 void GameFrame(void);
 void TelComHandleAllEvents(tTelComInfo *tcs) {
   static float last_frame_time = 0;

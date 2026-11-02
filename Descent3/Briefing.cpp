@@ -550,6 +550,15 @@ void PBEndScreen() {
 }
 
 bool PBLoopCallback() {
+  // #region RHH [Bugfix] The parser calls this for every line, and each TelCom frame waits out the frame rate cap,
+  // so a long briefing took seconds to load. Run a frame only when one is due.
+  static float next_frame;
+  if (!pbfirst_call && timer_GetTime() < next_frame) {
+    return false;
+  }
+  next_frame = timer_GetTime() + 1.0f / TELCOM_FRAMERATE_CAP;
+  // #endregion
+
   if (!pbfirst_call) {
     Sound_system.EndSoundFrame();
   } else

@@ -275,6 +275,7 @@ void TelCom_AddCustomKeyEvent(int key_id, int event_id);
  *	This should be called once a frame, it will handle all events in the TelCom system and send off any system
  *	events to the effects/buttons
  */
+#define TELCOM_FRAMERATE_CAP 25.0f // RHH [Bugfix] Moved from TelCom.cpp for the briefing parser
 void TelComHandleAllEvents(tTelComInfo *tcs);
 /*
  *	Given the key that has been pressed, or being held down, it processes the event depending on what key
