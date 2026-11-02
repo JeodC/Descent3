@@ -141,13 +141,18 @@ static bool joy_InitStick(tJoystick joy, char *server_adr) {
   if (server_adr) {
     return false;
   }
-  SDL_Joystick *stick = SDL_OpenJoystick(joy);
+  // #region RHH [Bugfix] SDL3 opens joysticks by instance ID, not by their place in the list
+  int count = 0;
+  SDL_JoystickID *ids = SDL_GetJoysticks(&count);
+  SDL_Joystick *stick = (ids && joy < count) ? SDL_OpenJoystick(ids[joy]) : nullptr;
+  SDL_free(ids);
+  // #endregion
   Joysticks[joy].handle = stick;
   if (stick) {
     tJoyInfo caps;
 
     memset(&caps, 0, (sizeof(caps)));
-    strncpy(caps.name, SDL_GetJoystickNameForID(joy), sizeof(caps.name) - 1);
+    strncpy(caps.name, SDL_GetJoystickName(stick), sizeof(caps.name) - 1); // RHH [Bugfix] Takes an ID too
     caps.num_btns = SDL_GetNumJoystickButtons(stick);
     int axes = SDL_GetNumJoystickAxes(stick);
     switch (axes) {
