@@ -429,7 +429,9 @@ void ConfigureDisplayResolutions() {
   }
 
   int tmp;
-  if (!Database->read_int("RS_resolution", &tmp)) {
+  // RHH [Bugfix] -Width and -Height worked only until the first save, and a saved index can be past this list's end
+  if ((widtharg && heightarg) || !Database->read_int("RS_resolution", &tmp) ||
+      Current_video_resolution_id >= (int)Video_res_list.size()) {
     // Only override resolution id if the value was not found in the settings
     Current_video_resolution_id = Default_resolution_id;
   }
