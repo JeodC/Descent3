@@ -54,6 +54,15 @@ typedef enum {
 
   // #### `result`
   // ```c
+  // true
+  // ```
+  // A listener may change the highest level New Game offers.
+  // #### `args`
+  // - `*int` (highest)
+  VB_NEW_GAME_HIGHEST_LEVEL,
+
+  // #### `result`
+  // ```c
   // scalar > .01, or with || (robotobj->mtype.phys_info.flags & PF_LOCK_MASK) for a robot
   // ```
   // Whether a ship bumping a ship or a robot makes a sound, and lets the robots hear it.
@@ -123,6 +132,15 @@ typedef enum {
   // #### `args`
   // - None
   VB_SHOW_OPTIONS_MENU,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether New Game's mission list sorts its missions by name.
+  // #### `args`
+  // - None
+  VB_SORT_MISSION_LIST,
 
   // #### `result`
   // ```c

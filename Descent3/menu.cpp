@@ -678,6 +678,7 @@
 #include "cinematics.h"
 #include "multi_dll_mgr.h"
 #include "newui_core.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 #ifdef _WIN32
 #define USE_DIRECTPLAY
@@ -1148,7 +1149,8 @@ bool MenuNewGame() {
 
   select_sheet = menu.GetSheet();
   select_sheet->NewGroup(nullptr, 10, 0);
-  msn_lb = select_sheet->AddListBox(352, 256, UID_MSNLB);
+  msn_lb = select_sheet->AddListBox(352, 256, UID_MSNLB,
+                                    GameInteractor_Should(VB_SORT_MISSION_LIST, true) ? 0 : UILB_NOSORT);
   select_sheet->NewGroup(nullptr, 160, 280, NEWUI_ALIGN_HORIZ);
   select_sheet->AddButton(TXT_OK, UID_OK);
   select_sheet->AddButton(TXT_CANCEL, UID_CANCEL);
@@ -1158,6 +1160,7 @@ bool MenuNewGame() {
 #ifndef OEM
   // generate real listbox now.
   n_missions = generate_mission_listbox(msn_lb, filelist, cf_LocateMultiplePaths("missions"));
+  GameInteractor_ExecuteOnMissionListFilled(msn_lb, &filelist);
 
   if (n_missions == 0) {
     DoMessageBox(TXT_ERROR, TXT_NOMISSIONS, MSGBOX_OK);
@@ -1249,6 +1252,8 @@ redo_newgame_menu:
 #else
       highest = PilotGetHighestLevelAchieved(&Current_pilot, Current_mission.name);
       highest = std::min(highest + 1, Current_mission.num_levels);
+      // Using Should hook, but ignoring return value, to be able to modify the highest level offered
+      GameInteractor_Should(VB_NEW_GAME_HIGHEST_LEVEL, true, &highest);
 #endif
       if (highest > 1) {
         int start_level = DisplayLevelWarpDlg(highest);

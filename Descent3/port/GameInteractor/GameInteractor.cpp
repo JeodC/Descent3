@@ -6,6 +6,10 @@ void GameInteractor_ExecuteOnDatabaseCreated() {
   GameInteractor::Instance->ExecuteHooks<GameInteractor::OnDatabaseCreated>();
 }
 
+void GameInteractor_ExecuteOnMissionListFilled(newuiListBox *list, std::vector<std::filesystem::path> *files) {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnMissionListFilled>(list, files);
+}
+
 void GameInteractor_ExecuteOnMovieEnd() { GameInteractor::Instance->ExecuteHooks<GameInteractor::OnMovieEnd>(); }
 
 void GameInteractor_ExecuteOnMovieFrame(int x, int y, int width, int height) {

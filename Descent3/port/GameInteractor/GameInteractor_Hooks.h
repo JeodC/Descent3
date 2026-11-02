@@ -18,6 +18,7 @@ struct SDL_Window;
 
 extern "C" {
 void GameInteractor_ExecuteOnDatabaseCreated();
+void GameInteractor_ExecuteOnMissionListFilled(newuiListBox *list, std::vector<std::filesystem::path> *files);
 void GameInteractor_ExecuteOnMovieEnd();
 void GameInteractor_ExecuteOnMovieFrame(int x, int y, int width, int height);
 
