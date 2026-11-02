@@ -6,6 +6,12 @@ void GameInteractor_ExecuteOnDatabaseCreated() {
   GameInteractor::Instance->ExecuteHooks<GameInteractor::OnDatabaseCreated>();
 }
 
+void GameInteractor_ExecuteOnMovieEnd() { GameInteractor::Instance->ExecuteHooks<GameInteractor::OnMovieEnd>(); }
+
+void GameInteractor_ExecuteOnMovieFrame(int x, int y, int width, int height) {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnMovieFrame>(x, y, width, height);
+}
+
 bool GameInteractor_ShouldV(GIVanillaBehavior flag, uint32_t result, va_list args) {
   // Because of default argument promotion, even though our incoming "result" is just a bool, it needs to be typed as
   // an int to be permitted to be used in `va_start`, otherwise it is undefined behavior.

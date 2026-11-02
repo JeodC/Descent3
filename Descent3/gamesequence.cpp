@@ -1085,6 +1085,7 @@
 #include "gamepath.h"
 #include "bsp.h"
 #include "args.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 //	Variables
 tGameState Game_state = GAMESTATE_IDLE;      // current game state.
@@ -1991,7 +1992,8 @@ void RunGameMenu() {
     case GAME_OPTIONS_INTERFACE: {
       extern void OptionsMenu();
       ui_ShowCursor();
-      OptionsMenu();
+      if (GameInteractor_Should(VB_SHOW_OPTIONS_MENU, true))
+        OptionsMenu();
       ui_HideCursor();
     } break;
     case GAME_HELP_INTERFACE: {

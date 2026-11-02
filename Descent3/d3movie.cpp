@@ -29,6 +29,7 @@
 #include "log.h"
 #include "mem.h"
 #include "mvelib.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 #include "renderer.h"
 
 namespace {
@@ -123,6 +124,7 @@ int mve_PlayMovie(const std::filesystem::path &pMovieName, oeApplication *pApp) 
       break;
     }
   }
+  GameInteractor_ExecuteOnMovieEnd();
 
   // free our bitmap
   if (Movie_bm_handle != -1) {
@@ -278,6 +280,7 @@ void CallbackShowFrame(uint8_t *buf, uint32_t bufw, uint32_t bufh, uint32_t sx, 
 
   EndFrame();
 
+  GameInteractor_ExecuteOnMovieFrame(dstx, dsty, drawWidth, drawHeight);
   rend_Flip();
 }
 

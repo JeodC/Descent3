@@ -53,6 +53,7 @@
 #include "NewBitmap.h"
 #include "shaders.h"
 #include "ShaderProgram.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 #if defined(WIN32)
 #include "win/arb_extensions.h"
@@ -1498,6 +1499,10 @@ void rend_Flip() {
       scaledHeight = h;
       scaledWidth = (int)(((((double)GOpenGLFBOWidth) / ((double)GOpenGLFBOHeight))) * ((double)h));
     }
+    int sourceX = 0, sourceY = 0, sourceWidth = GOpenGLFBOWidth, sourceHeight = GOpenGLFBOHeight;
+    // Using Should hook, but ignoring return value, to be able to modify the frame's size and the part of it shown
+    GameInteractor_Should(VB_REND_FRAME_SIZE, true, &scaledWidth, &scaledHeight, w, h, &sourceX, &sourceY,
+                          &sourceWidth, &sourceHeight);
 
     const int centeredX = (w - scaledWidth) / 2;
     const int centeredY = (h - scaledHeight) / 2;
@@ -1505,8 +1510,9 @@ void rend_Flip() {
     dglBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
     dglClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     dglClear(GL_COLOR_BUFFER_BIT); // in case the Steam Overlay wrote to places we don't blit over.
-    dglBlitFramebuffer(0, 0, GOpenGLFBOWidth, GOpenGLFBOHeight, centeredX, centeredY, centeredX + scaledWidth,
-                       centeredY + scaledHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+    dglBlitFramebuffer(sourceX, sourceY, sourceX + sourceWidth, sourceY + sourceHeight, centeredX, centeredY,
+                       centeredX + scaledWidth, centeredY + scaledHeight, GL_COLOR_BUFFER_BIT,
+                       GameInteractor_Should(VB_REND_LINEAR_FILTER, true) ? GL_LINEAR : GL_NEAREST);
     dglBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 

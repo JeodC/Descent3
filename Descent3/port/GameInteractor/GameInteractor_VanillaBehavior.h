@@ -15,6 +15,25 @@ typedef enum {
 
   // #### `result`
   // ```c
+  // force_res_change
+  // ```
+  // Whether the game window takes the whole screen, or else the pilot's saved size.
+  // #### `args`
+  // - None
+  VB_FULL_GAME_WINDOW,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // A listener may change the size the game view renders at, which starts as the screen's.
+  // #### `args`
+  // - `*int` (scr_width)
+  // - `*int` (scr_height)
+  VB_GAME_RESOLUTION,
+
+  // #### `result`
+  // ```c
   // true
   // ```
   // A listener may move where the HUD draws an item, in screen pixels.
@@ -56,10 +75,45 @@ typedef enum {
   // ```c
   // true
   // ```
+  // A listener may change the size the frame is drawn at in the window, which it's centered in, and the part of the
+  // frame drawn, in pixels from its bottom left.
+  // #### `args`
+  // - `*int` (scaledWidth)
+  // - `*int` (scaledHeight)
+  // - `int32_t` (w, the window's width in pixels)
+  // - `int32_t` (h, the window's height in pixels)
+  // - `*int` (sourceX)
+  // - `*int` (sourceY)
+  // - `*int` (sourceWidth, GOpenGLFBOWidth to start with)
+  // - `*int` (sourceHeight, GOpenGLFBOHeight to start with)
+  VB_REND_FRAME_SIZE,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether the frame is scaled to the window with linear filtering, or else nearest.
+  // #### `args`
+  // - None
+  VB_REND_LINEAR_FILTER,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
   // Whether ProgramVersion saves the version in its copy of the registry.
   // #### `args`
   // - None
   VB_SAVE_PROGRAM_VERSION,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether the game opens the options menu, between frames.
+  // #### `args`
+  // - None
+  VB_SHOW_OPTIONS_MENU,
 
   // #### `result`
   // ```c

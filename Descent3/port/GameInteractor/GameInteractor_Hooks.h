@@ -18,6 +18,8 @@ struct SDL_Window;
 
 extern "C" {
 void GameInteractor_ExecuteOnDatabaseCreated();
+void GameInteractor_ExecuteOnMovieEnd();
+void GameInteractor_ExecuteOnMovieFrame(int x, int y, int width, int height);
 
 bool GameInteractor_Should(GIVanillaBehavior flag, uint32_t result, ...);
 GI_EXPORT bool GameInteractor_ShouldV(GIVanillaBehavior flag, uint32_t result, va_list args);

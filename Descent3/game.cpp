@@ -683,6 +683,7 @@
 #include "newui.h"
 #include "pilot.h"
 #include "player.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 #include "pserror.h"
 #include "render.h"
 #include "renderer.h"
@@ -939,6 +940,8 @@ void SetScreenMode(int sm, bool force_res_change) {
     if (sm == SM_GAME) {
       scr_width = Video_res_list[Current_video_resolution_id].width;
       scr_height = Video_res_list[Current_video_resolution_id].height;
+      // Using Should hook, but ignoring return value, to be able to modify the size
+      GameInteractor_Should(VB_GAME_RESOLUTION, true, &scr_width, &scr_height);
       scr_bitdepth = Render_preferred_bitdepth;
     } else {
       scr_width = FIXED_SCREEN_WIDTH;
@@ -1046,7 +1049,7 @@ void SetScreenMode(int sm, bool force_res_change) {
     SetUICallback(nullptr);
     int gw, gh;
     Current_pilot.get_hud_data(nullptr, nullptr, nullptr, &gw, &gh);
-    if (force_res_change) {
+    if (GameInteractor_Should(VB_FULL_GAME_WINDOW, force_res_change)) {
       gw = Max_window_w;
       gh = Max_window_h;
     }
