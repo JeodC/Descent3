@@ -152,6 +152,7 @@
 #include "UIlib.h"
 #include "Macros.h"
 #include "log.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 #include "pserror.h"
 
 //	the window font for all windows
@@ -408,7 +409,8 @@ int UIWindow::Process() {
       if (m_GadgetCur->m_CurrentSlave) {
         m_GadgetCur->m_CurrentSlave->Process(false, true);
       }
-      m_GadgetCur->Process(true, m_GadgetCur->m_CurrentSlave ? false : true);
+      m_GadgetCur->Process(GameInteractor_Should(VB_UI_GADGET_PROCESS_KEYS, true, m_GadgetCur),
+                           m_GadgetCur->m_CurrentSlave ? false : true);
     }
   }
 
@@ -425,6 +427,9 @@ void UIWindow::OnUserProcess() {}
 void UIWindow::OnKeyDown(int key) {
   UIGadget *gadget, *start_gadget;
   bool in_group;
+
+  // Using Should hook, but ignoring return value, to be able to modify the key
+  GameInteractor_Should(VB_UI_WINDOW_KEY_DOWN, true, &key, m_GadgetCur, m_CurGadgetInGroup);
 
   //	advance down gadget list.
   if (key == KEY_TAB) {

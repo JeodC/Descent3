@@ -146,6 +146,26 @@ typedef enum {
   // ```c
   // true
   // ```
+  // Whether the gadget in focus processes this frame's key.
+  // #### `args`
+  // - `*UIGadget` (m_GadgetCur)
+  VB_UI_GADGET_PROCESS_KEYS,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // A listener may change the key the window handles.
+  // #### `args`
+  // - `*int` (key)
+  // - `*UIGadget` (m_GadgetCur, the gadget in focus, may be null)
+  // - `int32_t` (m_CurGadgetInGroup, promoted from `bool`)
+  VB_UI_WINDOW_KEY_DOWN,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
   // Whether bumping a wall or a robot hard enough to hurt plays the damage sound, besides the bump sound.
   // #### `args`
   // - None
