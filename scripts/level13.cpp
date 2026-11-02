@@ -1641,8 +1641,10 @@ const char *Matcen_names[NUM_MATCEN_NAMES] = {"Aft Matcen1",    "Aft Matcen2",  
 int Matcen_indexes[NUM_MATCEN_NAMES];
 
 #define NUM_GOAL_NAMES 5
-const char *Goal_names[NUM_GOAL_NAMES] = {"ShutdownEngineCore", "Disable Aft Matcen", "Destroy StormTrooper Leader",
-                                    "Eliminate Remaining StormTroopers", "Reduce Infected Robot Threat"};
+// RHH [Bugfix] The level names the goal "Shut down Engine Core", so "ShutdownEngineCore" found nothing and the goal
+// never completed
+const char *Goal_names[NUM_GOAL_NAMES] = {"Shut down Engine Core", "Disable Aft Matcen", "Destroy StormTrooper Leader",
+                                          "Eliminate Remaining StormTroopers", "Reduce Infected Robot Threat"};
 int Goal_indexes[NUM_GOAL_NAMES];
 
 #define NUM_MESSAGE_NAMES 39
