@@ -323,9 +323,11 @@ intptr_t mve_SequenceStart(const char *mvename, void *fhandle, oeApplication *ap
 #ifndef NO_MOVIES
   // first, find that movie..
   std::filesystem::path real_name = cf_LocatePath(std::filesystem::path("movies") / mvename);
-  fhandle = fopen(PATH_TO_CSTR(real_name), "rb");
+  // RHH [Bugfix] The file goes back through fhandle, so mve_SequenceClose can close it
+  FILE *file = fopen(PATH_TO_CSTR(real_name), "rb");
+  *(FILE **)fhandle = file;
 
-  if (fhandle == nullptr) {
+  if (file == nullptr) {
     LOG_WARNING.printf("MOVIE: Unable to open %s", PATH_TO_CSTR(real_name));
     return 0;
   }
@@ -342,11 +344,11 @@ intptr_t mve_SequenceStart(const char *mvename, void *fhandle, oeApplication *ap
   // let the render know we will be copying bitmaps to framebuffer (or something)
   rend_SetFrameBufferCopyState(true);
 
-  MVESTREAM *mve = MVE_rmPrepMovie(fhandle, -1, -1, 0);
+  MVESTREAM *mve = MVE_rmPrepMovie(file, -1, -1, 0);
   if (mve == nullptr) {
     LOG_ERROR.printf("Failed to PrepMovie %s", mvename);
-    fclose((FILE *)fhandle);
-    return MVELIB_INIT_ERROR;
+    fclose(file);
+    return 0; // RHH [Bugfix] The caller takes any other value for a movie
   }
 
   return (intptr_t)mve;
@@ -404,6 +406,7 @@ bool mve_SequenceClose(intptr_t hMovie, void *hFile) {
     return false;
 
   MVE_rmEndMovie((MVESTREAM *)hMovie);
+  fclose((FILE *)hFile); // RHH [Bugfix] Nothing else closes it
 
   // free our bitmap
   if (Movie_bm_handle != -1) {
