@@ -865,6 +865,12 @@ int CheckGetD3M(char *d3m) {
     return 1;
   }
 
+  // #region RHH [Bugfix] ModDownloadWithStatus is a stub, so a join stopped here without a word
+  char msg[128];
+  snprintf(msg, sizeof(msg), "This game needs %s, which isn't in the netgames folder.", d3m);
+  DoMessageBox(TXT_ERROR, msg, MSGBOX_OK);
+  // #endregion
+
   mem_free(lowurl);
   mem_free(fixedd3m);
   return 0;
