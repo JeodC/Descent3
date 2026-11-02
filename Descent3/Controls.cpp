@@ -426,6 +426,7 @@
 #include "player.h"
 #include "hlsoundlib.h"
 #include "sounds.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 float Key_ramp_speed = 0.5f;
 
@@ -1030,6 +1031,9 @@ void DoKeyboardWeapons(game_controls *controls) {
   if (automap_key.value) {
     Game_interface_mode = GAME_TELCOM_AUTOMAP;
   }
+
+  if (!GameInteractor_Should(VB_CYCLE_WEAPONS, true, &cycle_prim, &cycle_sec))
+    return;
 
   // do cycling weapons
   for (i = 0; i < (int)cycle_prim.value; i++)

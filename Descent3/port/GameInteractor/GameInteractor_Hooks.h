@@ -17,6 +17,7 @@ struct SDL_Window;
 #endif
 
 extern "C" {
+void GameInteractor_ExecuteOnControlsProcessed();
 void GameInteractor_ExecuteOnDatabaseCreated();
 void GameInteractor_ExecuteOnLevelWarpListFilled(newuiListBox *list, int highestAllowed, int maxLevel);
 void GameInteractor_ExecuteOnMissionListFilled(newuiListBox *list, std::vector<std::filesystem::path> *files);

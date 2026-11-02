@@ -862,6 +862,7 @@
 #include "renderobject.h"
 #include "buddymenu.h"
 #include "pserror.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 #ifdef EDITOR
 #include "editor\d3edit.h"
@@ -2955,6 +2956,7 @@ void GameFrame(void) {
       RTP_tSTARTTIME(processkeys_time, curr_time);
       ProcessKeys();
       ProcessButtons();
+      GameInteractor_ExecuteOnControlsProcessed();
       RTP_tENDTIME(processkeys_time, curr_time);
     }
 

@@ -2,6 +2,10 @@
 
 GameInteractor *GameInteractor::Instance;
 
+void GameInteractor_ExecuteOnControlsProcessed() {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnControlsProcessed>();
+}
+
 void GameInteractor_ExecuteOnDatabaseCreated() {
   GameInteractor::Instance->ExecuteHooks<GameInteractor::OnDatabaseCreated>();
 }

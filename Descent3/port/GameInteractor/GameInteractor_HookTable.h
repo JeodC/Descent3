@@ -1,3 +1,4 @@
+DEFINE_HOOK(OnControlsProcessed, ())
 DEFINE_HOOK(OnDatabaseCreated, ())
 DEFINE_HOOK(OnLevelWarpListFilled, (newuiListBox * list, int highestAllowed, int maxLevel))
 DEFINE_HOOK(OnMissionListFilled, (newuiListBox * list, std::vector<std::filesystem::path> *files))

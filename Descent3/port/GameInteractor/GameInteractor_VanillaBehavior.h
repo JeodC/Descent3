@@ -17,6 +17,16 @@ typedef enum {
   // ```c
   // true
   // ```
+  // Whether the weapon cycling buttons switch weapons this frame.
+  // #### `args`
+  // - `*ct_packet` (cycle_prim)
+  // - `*ct_packet` (cycle_sec)
+  VB_CYCLE_WEAPONS,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
   // Whether the registry writes .Descent3Registry.
   // #### `args`
   // - `*CRegistry` (this)
