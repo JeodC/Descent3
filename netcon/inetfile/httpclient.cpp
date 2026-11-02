@@ -24,6 +24,8 @@ HttpClient::HttpClient(const std::string &URL) {
   m_client = std::make_unique<httplib::Client>(URL);
   m_client->set_follow_location(true);  // Follow redirects
   m_client->set_connection_timeout(5, 0); // 5 sec timeout
+  // RHH [Bugfix] Mission hosts answer requests without one with 429 Too Many Requests
+  m_client->set_default_headers({{"User-Agent", "Descent 3"}});
 }
 
 httplib::Result HttpClient::Get(const std::string &URIPath) {
