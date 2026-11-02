@@ -83,6 +83,7 @@ int rend_ReInit();
 float rend_GetAlphaMultiplier();
 
 void gpu_SetMultitextureBlendMode(bool state);
+void gpu_SetVSync(bool state); // RHH [Bugfix]
 void gpu_BindTexture(int handle, int map_type, int slot);
 void gpu_RenderPolygon(PosColorUVVertex *vData, uint32_t nv);
 void gpu_RenderPolygonUV2(PosColorUV2Vertex *vData, uint32_t nv);

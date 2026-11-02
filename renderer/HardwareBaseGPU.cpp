@@ -359,6 +359,11 @@ int rend_SetPreferredState(renderer_preferred_state *pref_state, bool reinit) {
     if (old_state.gamma != pref_state->gamma) {
       rend_SetGammaValue(pref_state->gamma);
     }
+
+    // RHH [Bugfix] Nothing applied the VSync setting
+    if (old_state.vsync_on != pref_state->vsync_on) {
+      gpu_SetVSync(pref_state->vsync_on);
+    }
   } else {
     gpu_preferred_state = *pref_state;
   }

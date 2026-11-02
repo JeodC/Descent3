@@ -471,6 +471,7 @@ int opengl_Setup(oeApplication *app, const int *width, const int *height) {
     return 0;
   }
 
+  gpu_SetVSync(gpu_preferred_state.vsync_on); // RHH [Bugfix] Nothing applied the VSync setting
   // clear the window framebuffer to start.
   dglClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   dglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -1128,6 +1129,9 @@ void gpu_DrawFlatPolygon3D(g3Point **p, int nv) {
 
   gpu_RenderPolygon(vertices.data(), nv);
 }
+
+// RHH [Bugfix]
+void gpu_SetVSync(bool state) { SDL_GL_SetSwapInterval(state ? 1 : 0); }
 
 // Sets the gamma correction value
 void rend_SetGammaValue(float val) {
