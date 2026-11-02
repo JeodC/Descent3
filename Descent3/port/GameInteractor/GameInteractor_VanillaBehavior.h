@@ -180,6 +180,16 @@ typedef enum {
   // ```c
   // true
   // ```
+  // A listener may change the description the save dialog starts with.
+  // #### `args`
+  // - `*char` (desc)
+  // - `int32_t` (sizeof(desc))
+  VB_SAVE_DESCRIPTION,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
   // Whether ProgramVersion saves the version in its copy of the registry.
   // #### `args`
   // - None

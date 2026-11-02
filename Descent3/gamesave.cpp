@@ -299,6 +299,7 @@
 #include "d3music.h"
 #include "pserror.h"
 #include "weather.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 // function prototypes.
 
@@ -462,6 +463,8 @@ void SaveGameDialog() {
       } else {
         desc[0] = 0;
       }
+      // Using Should hook, but ignoring return value, to be able to modify the description
+      GameInteractor_Should(VB_SAVE_DESCRIPTION, true, desc, (int)sizeof(desc));
 
     reenter_save:
       if (DoEditDialog(TXT_DESCRIPTION, desc, sizeof(desc) - 1)) {
