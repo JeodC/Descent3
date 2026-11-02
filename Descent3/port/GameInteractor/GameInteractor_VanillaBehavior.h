@@ -63,6 +63,15 @@ typedef enum {
 
   // #### `result`
   // ```c
+  // m_iProtectedFlags & DMFC_PRF_INOPTIONS
+  // ```
+  // A listener may follow whether the netgame's on-screen menu (F6) is up, asked once a frame.
+  // #### `args`
+  // - None
+  VB_NETGAME_MENU_UP,
+
+  // #### `result`
+  // ```c
   // true
   // ```
   // A listener may change the highest level New Game offers.

@@ -284,6 +284,7 @@
 #include "gamedll_header.h"
 #include "DMFC.h"
 #include "dmfcinternal.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 #define SND_MYTEAM_TEAMMATE_KILLED "PlayerDeath"
 #define SND_NONTEAM_KILL "PlayerDeath"
@@ -770,6 +771,9 @@ void DMFCBase::OnHUDInterval(void) {
 //
 //   Event handler that gets called once a frame
 void DMFCBase::OnInterval(void) {
+  // Using Should hook, but ignoring return value, to be able to follow the on-screen menu
+  GameInteractor_Should(VB_NETGAME_MENU_UP, m_iProtectedFlags & DMFC_PRF_INOPTIONS);
+
   if (!(m_iProtectedFlags & DMFC_PRF_PAUSETIME)) {
     RealGametime += *Frametime; // increment the timer
   }
