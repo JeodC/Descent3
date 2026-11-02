@@ -1276,6 +1276,13 @@ void LoadLevelText(const std::filesystem::path &level_filename) {
 /*	loads a level and sets it as current level in mission
  */
 bool LoadMissionLevel(int level) {
+  // #region RHH [Bugfix] A server can be on a level this copy of the mission doesn't have
+  if (level < 1 || level > (int)Current_mission.levels.size() || !Current_mission.levels[level - 1].filename) {
+    LOG_ERROR.printf("Mission %s has no level %d", Current_mission.filename ? Current_mission.filename : "", level);
+    DoMessageBox(TXT_ERROR, TXT_MSN_LVLNUMINVALID, MSGBOX_OK);
+    return false;
+  }
+  // #endregion
   Hud_show_controls = false;
   LoadLevelProgress(LOAD_PROGRESS_START, 0);
   if (!LoadLevel(Current_mission.levels[level - 1].filename, nullptr)) {
