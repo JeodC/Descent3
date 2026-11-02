@@ -968,7 +968,8 @@ int8_t sdlgameController::get_button_controller(uint8_t btn) {
     //@@		if (((unsigned)btn < m_ControlList[i].buttons) && !(m_ControlList[i].btnmask & mask) &&
     //(m_ControlList[i].id
     //!= CTID_INVALID)) {
-    if (((unsigned)btn < m_ControlList[i].buttons) && (m_ControlList[i].id != CTID_INVALID)) {
+    // RHH [Bugfix] Buttons count from 1, so the last one couldn't be bound
+    if (((unsigned)btn <= m_ControlList[i].buttons) && (m_ControlList[i].id != CTID_INVALID)) {
       //@@			m_ControlList[i].btnmask |= mask;
       return i;
     }
