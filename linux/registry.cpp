@@ -53,6 +53,7 @@
 #include <cctype>
 #include <sstream>
 #include "log.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 #include "registry.h"
 
 #if defined(_WIN32)
@@ -184,6 +185,8 @@ void CRegistry::DestroyRecord(tRecord *record) {
 }
 
 void CRegistry::Export() {
+  if (!GameInteractor_Should(VB_EXPORT_REGISTRY, true, this))
+    return;
   tKey *curr, *next;
   curr = next = root;
   FILE *file;

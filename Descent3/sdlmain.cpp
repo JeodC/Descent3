@@ -46,6 +46,7 @@
 #include "log.h"
 #include "config.h"
 #include "pilot.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 #include "port/Port.h"
 
 #ifdef WIN32
@@ -313,6 +314,7 @@ int main(int argc, char *argv[]) {
   if (run_d3) {
     oeD3LnxApp d3(flags);
     oeD3LnxDatabase dbase;
+    GameInteractor_ExecuteOnDatabaseCreated();
     StartDedicatedServer();
     PreInitD3Systems();
 

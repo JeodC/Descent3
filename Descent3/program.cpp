@@ -64,6 +64,7 @@
 #include "descent.h"
 
 #include "appdatabase.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 program_version Program_version;
 
@@ -104,6 +105,8 @@ void ProgramVersion(int version_type, uint8_t major, uint8_t minor, uint8_t buil
     Int3(); // NO NO NO
   }
 
+  if (!GameInteractor_Should(VB_SAVE_PROGRAM_VERSION, true))
+    return;
   if (dbase.lookup_record("Version")) {
     dbase.write("Major", Program_version.major);
     dbase.write("Minor", Program_version.minor);
