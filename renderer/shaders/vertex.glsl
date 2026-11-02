@@ -35,6 +35,7 @@ void main()
 {
     vertex_modelview_pos = u_modelview * vec4(in_pos, 1);
     gl_Position = u_projection * vertex_modelview_pos;
+    gl_PointSize = 1.0; // RHH [Port] GLSL ES leaves the point size undefined unless it's written
     vertex_color = in_color;
     vertex_uv0 = in_uv0;
     vertex_uv1 = in_uv1;

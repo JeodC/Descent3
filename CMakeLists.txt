@@ -46,6 +46,8 @@ option(ENABLE_LOGGER "Enable logging to the terminal" OFF)
 option(ENABLE_MEM_RTL "Enable Real-time library memory management functions (disable to verbose memory allocations)" ON)
 option(ENABLE_MOCK_CLOCK "Replace the real-time clock with a mock one that advances a fixed 16ms per frame, for automated testing" OFF)
 option(FATAL_GL_ERRORS "Check OpenGL calls and raise exceptions on errors." OFF)
+# RHH [Port] Handhelds' drivers have OpenGL ES only
+option(D3_GLES "Render through OpenGL ES 3.0 instead of desktop OpenGL" OFF)
 option(FORCE_COLORED_OUTPUT "Always produce ANSI-colored compiler warnings/errors (GCC/Clang only; esp. useful with Ninja)." OFF)
 option(FORCE_PORTABLE_INSTALL "Install all files into local directory defined by CMAKE_INSTALL_PREFIX" ON)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
@@ -282,6 +284,12 @@ endif()
 if(FATAL_GL_ERRORS)
   message("Raising exceptions on OpenGL errors")
   add_compile_definitions(FATAL_GL_ERRORS)
+endif()
+
+# RHH [Port]
+if(D3_GLES)
+  message("Rendering through OpenGL ES 3.0")
+  add_compile_definitions(D3_GLES)
 endif()
 
 include_directories(

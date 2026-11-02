@@ -6,7 +6,7 @@ set(SHADERS
 )
 add_custom_command(
   OUTPUT ${SHADERS_H}
-  COMMAND ${CMAKE_COMMAND} -Dshaders_h=${SHADERS_H} -P ../cmake/shaders.cmake -- ${SHADERS}
+  COMMAND ${CMAKE_COMMAND} -Dshaders_h=${SHADERS_H} -Dshaders_es=${D3_GLES} -P ../cmake/shaders.cmake -- ${SHADERS}
   DEPENDS ../cmake/shaders.cmake ${SHADERS}
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )

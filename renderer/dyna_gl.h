@@ -197,7 +197,9 @@ DYNAEXTERN(glGenRenderbuffers);
 DYNAEXTERN(glRenderbufferStorage);
 
 DYNAEXTERN(glActiveTexture);
+#ifndef D3_GLES // RHH [Port] Not in OpenGL ES, and unused
 DYNAEXTERN(glMultiTexCoord4f);
+#endif
 
 #if defined(WIN32)
 DYNAEXTERN(wglCreateContext);

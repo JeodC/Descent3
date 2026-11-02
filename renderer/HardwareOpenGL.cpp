@@ -364,6 +364,14 @@ int opengl_Setup(oeApplication *app, const int *width, const int *height) {
     }
   }
 
+  // #region RHH [Port] Set before loading the library: SDL's EGL backends pick libGLESv2 or libGL from the profile
+#ifdef D3_GLES
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
+#endif
+  // #endregion
+
   if (!Already_loaded) {
     char gl_library[256];
     int arg;
@@ -383,7 +391,9 @@ int opengl_Setup(oeApplication *app, const int *width, const int *height) {
     OpenGLDLLHandle = LoadOpenGLDLL(gl_library);
     if (!(OpenGLDLLHandle)) {
       // rcg07072000 last ditch effort...
-#if defined(POSIX)
+#if defined(D3_GLES) // RHH [Port]
+      strcpy(gl_library, "libGLESv2.so.2");
+#elif defined(POSIX)
       strcpy(gl_library, "libGL.so.1");
 #else
       strcpy(gl_library, "opengl32.dll");
@@ -408,9 +418,11 @@ int opengl_Setup(oeApplication *app, const int *width, const int *height) {
   SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
   SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
   SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+#ifndef D3_GLES // RHH [Port]
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
   SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+#endif
 
   if (!GSDLWindow) {
     int display_num = 0;
@@ -575,6 +587,9 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
 
   // Do we have packed pixel formats?
   OpenGL_packed_pixels = opengl_CheckExtension("GL_EXT_packed_pixels");
+#ifdef D3_GLES // RHH [Port] Core in OpenGL ES 3.0, so not listed as an extension
+  OpenGL_packed_pixels = 1;
+#endif
 
   opengl_InitCache();
 

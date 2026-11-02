@@ -10,6 +10,11 @@ while(${idx} LESS ${CMAKE_ARGC})
         set(shader_path ${CMAKE_ARGV${idx}})
         cmake_path(GET shader_path STEM shader_name)
         file(READ ${shader_path} content)
+        # RHH [Port] The same shaders as GLSL ES 3.00
+        if(shaders_es)
+            string(REPLACE "#version 150 core" "#version 300 es
+precision highp float;" content "${content}")
+        endif()
         file(APPEND ${shaders_h} "
 inline constexpr std::string_view ${shader_name} = R\"shader(${content}
 )shader\";

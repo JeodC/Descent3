@@ -51,10 +51,10 @@ void main()
         * max(texture(u_texture0, vertex_uv0), vec4(float(!bool((u_texture_enable >> 0) & 1))))
         * max(texture(u_texture1, vertex_uv1), vec4(float(!bool((u_texture_enable >> 1) & 1))));
 
-    float fog_factor = clamp((u_fog_end - length(vertex_modelview_pos)) * branchless_invert_or_zero(u_fog_end - u_fog_start), 0, 1);
+    float fog_factor = clamp((u_fog_end - length(vertex_modelview_pos)) * branchless_invert_or_zero(u_fog_end - u_fog_start), 0.0, 1.0); // RHH [Port] GLSL ES has no int to float conversion
     // out_color is unchanged when fog_factor is 1 (ie, fog distance == u_fog_start). thus, to disable,
     // fog_factor must also be 1. invert u_fog_enable (so that it is 1 when disabled) and take the max.
     fog_factor = max(fog_factor, float(!u_fog_enable));
-    out_color = out_color * fog_factor + (1 - fog_factor) * u_fog_color;
+    out_color = out_color * fog_factor + (1.0 - fog_factor) * u_fog_color; // RHH [Port] GLSL ES has no int to float conversion
     out_color.rgb = pow(out_color.rgb, vec3(1.0/u_gamma));
 }
