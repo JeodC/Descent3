@@ -2953,7 +2953,8 @@ void TelComHandleKeyPress(int key, bool click, int screen_id) {
       int found = -1;
       int node = Screen_roots[screen_id];
       while (node != -1) {
-        if (TCEffects[node].has_focus) {
+        // RHH [Bugfix] This found the button in focus again, not a text box
+        if (TCEffects[node].tab_stop && TCEffects[node].type != EFX_BUTTON) {
           // this guy has focus
           found = node;
           break;
@@ -2970,7 +2971,8 @@ void TelComHandleKeyPress(int key, bool click, int screen_id) {
 
     // if the effect to use (curr_focus) is a button, than get its parent ID, make sure it is a text effect
     if (TCEffects[curr_focus].type == EFX_BUTTON) {
-      int parent_id = TCEffects[curr_focus].buttoninfo.parent;
+      // RHH [Bugfix] The parent is an effect ID, not an index into TCEffects
+      int parent_id = GetEfxNumFromID(TCEffects[curr_focus].buttoninfo.parent, screen_id);
       if (parent_id == -1 ||
           (TCEffects[parent_id].type != EFX_TEXT_STATIC && TCEffects[parent_id].type != EFX_TEXT_TYPE &&
            TCEffects[parent_id].type != EFX_TEXT_FADE)) {
