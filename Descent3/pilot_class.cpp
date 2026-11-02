@@ -1372,7 +1372,8 @@ void pilot::read_controls(CFILE *file, bool skip) {
     type[1] = (ct_type)cf_ReadInt(file);
     value = (ct_config_data)cf_ReadInt(file);
 
-    for (y = 0; y < temp_b; y++) {
+    // RHH [Bugfix] Search this build's functions, not the file's count of them, which can be more
+    for (y = 0; y < NUM_CONTROLLER_FUNCTIONS; y++) {
       if (Controller_needs[y].id == id) {
         if (type[0] == ctNone) // do this if there are new functions that don't have ctNone.
           type[0] = Controller_needs[y].ctype[0];
@@ -1381,6 +1382,14 @@ void pilot::read_controls(CFILE *file, bool skip) {
         break;
       }
     }
+
+    // #region RHH [Bugfix] Skip a function this build doesn't have, which was written past the end of controls
+    if (y == NUM_CONTROLLER_FUNCTIONS) {
+      cf_ReadByte(file);
+      cf_ReadByte(file);
+      continue;
+    }
+    // #endregion
 
     controls[y].id = id;
     controls[y].type[0] = type[0];
