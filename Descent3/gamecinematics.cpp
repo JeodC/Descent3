@@ -213,6 +213,7 @@
 #include "osiris_dll.h"
 #include "multi.h"
 #include "weapon.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 #if (defined(_DEBUG) || defined(EDITOR))
 bool Cinematics_enabled = true;
@@ -984,7 +985,7 @@ bool Cinematic_IsKeyPressed(void) {
       return true;
   }
 
-  return false;
+  return GameInteractor_Should(VB_CINEMATIC_KEY_PRESSED, false);
 }
 
 //	Cinematic_Frame

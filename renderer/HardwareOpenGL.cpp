@@ -485,6 +485,8 @@ int opengl_Setup(oeApplication *app, const int *width, const int *height) {
   }
 
   gpu_SetVSync(gpu_preferred_state.vsync_on); // RHH [Bugfix] Nothing applied the VSync setting
+  GameInteractor_ExecuteOnRendContextCreated(GSDLWindow, GSDLGLContext);
+
   // clear the window framebuffer to start.
   dglClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   dglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -724,6 +726,7 @@ int opengl_Init(oeApplication *app, renderer_preferred_state *pref_state) {
 // Releases the rendering context
 void opengl_Close(const bool just_resizing) {
   CHECK_ERROR(5)
+  GameInteractor_ExecuteOnRendContextClosing();
 
   dglDeleteTextures(textures_.size(), textures_.data());
   textures_.clear();
@@ -1516,6 +1519,7 @@ void rend_Flip() {
     dglBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 
+  GameInteractor_ExecuteOnRendFlip();
   SDL_GL_SwapWindow(GSDLWindow);
 
   // go back to drawing on the FBO until we want to blit to the window framebuffer again.
@@ -1858,3 +1862,65 @@ void rend_TransformSetProjection(float trans[4][4]) {
 void rend_TransformSetModelView(float trans[4][4]) {
   gRenderer->setTransform(glm::make_mat4x4(&trans[0][0]), glm::mat4x4{1}, std::nullopt);
 }
+
+// #region RHH [Port] For the port's ship preview and automap
+static GLuint Offscreen_fbo = 0, Offscreen_texture = 0, Offscreen_depth = 0;
+static GLint Offscreen_width = 0, Offscreen_height = 0, Offscreen_old_fbo = 0;
+static int Offscreen_old_width, Offscreen_old_height;
+
+void rend_FreeOffscreen() {
+  if (Offscreen_fbo) {
+    dglDeleteFramebuffers(1, &Offscreen_fbo);
+    dglDeleteRenderbuffers(1, &Offscreen_depth);
+    dglDeleteTextures(1, &Offscreen_texture);
+  }
+  Offscreen_fbo = Offscreen_texture = Offscreen_depth = 0;
+  Offscreen_width = Offscreen_height = 0;
+}
+
+GLuint rend_StartOffscreen(int width, int height) {
+  dglGetIntegerv(GL_FRAMEBUFFER_BINDING, &Offscreen_old_fbo);
+  if (width != Offscreen_width || height != Offscreen_height) {
+    rend_FreeOffscreen();
+    Offscreen_width = width;
+    Offscreen_height = height;
+
+    GLint bound_texture;
+    dglGetIntegerv(GL_TEXTURE_BINDING_2D, &bound_texture);
+    dglGenTextures(1, &Offscreen_texture);
+    dglBindTexture(GL_TEXTURE_2D, Offscreen_texture);
+    dglTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    dglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    dglTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    dglBindTexture(GL_TEXTURE_2D, bound_texture);
+
+    dglGenRenderbuffers(1, &Offscreen_depth);
+    dglBindRenderbuffer(GL_RENDERBUFFER, Offscreen_depth);
+    dglRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
+
+    dglGenFramebuffers(1, &Offscreen_fbo);
+    dglBindFramebuffer(GL_FRAMEBUFFER, Offscreen_fbo);
+    dglFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Offscreen_texture, 0);
+    dglFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, Offscreen_depth);
+  }
+
+  dglBindFramebuffer(GL_FRAMEBUFFER, Offscreen_fbo);
+  dglScissor(0, 0, width, height);
+  dglClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+  dglClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  Offscreen_old_width = gpu_state.screen_width;
+  Offscreen_old_height = gpu_state.screen_height;
+  gpu_state.screen_width = width;
+  gpu_state.screen_height = height;
+  rend_StartFrame(0, 0, width - 1, height - 1, 0);
+  return Offscreen_texture;
+}
+
+void rend_EndOffscreen() {
+  rend_EndFrame();
+  gpu_state.screen_width = Offscreen_old_width;
+  gpu_state.screen_height = Offscreen_old_height;
+  dglBindFramebuffer(GL_FRAMEBUFFER, Offscreen_old_fbo);
+  dglScissor(0, 0, GOpenGLFBOWidth, GOpenGLFBOHeight);
+}
+// #endregion

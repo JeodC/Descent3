@@ -7,4 +7,7 @@ DEFINE_HOOK(OnMissionListFilled, (newuiListBox * list, std::vector<std::filesyst
 DEFINE_HOOK(OnMissionStatusUpdate, ())
 DEFINE_HOOK(OnMovieEnd, ())
 DEFINE_HOOK(OnMovieFrame, (int x, int y, int width, int height))
+DEFINE_HOOK(OnRendContextClosing, ())
+DEFINE_HOOK(OnRendContextCreated, (SDL_Window * window, void *glContext))
+DEFINE_HOOK(OnRendFlip, ())
 DEFINE_HOOK(ShouldVanillaBehavior, (GIVanillaBehavior flag, bool *should, va_list originalArgs))

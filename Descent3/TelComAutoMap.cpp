@@ -832,3 +832,84 @@ void TCAMCallback(void) {
 
   TCAMReadControls();
 }
+
+// #region RHH [Port] For the port's TelCom page
+// TelComAutoMap
+void TCAMStart() {
+  if (!AM_rotated_points) {
+    AM_rotated_points = mem_rmalloc<g3Point>(MAX_VERTS_PER_ROOM);
+  }
+  AM_current_marker = -1;
+  ClassifyAMFaces();
+  AM_ship_model_handle = LoadPolyModel("automapship.oof", 0);
+  TCAMCenterOnPlayer();
+  if (OBJECT_OUTSIDE(Viewer_object)) {
+    AM_terrain = 1;
+  }
+}
+
+void TCAMStop() {
+  FreeAMFaces();
+  if (AM_ship_model_handle != -1) {
+    FreePolyModel(AM_ship_model_handle);
+    AM_ship_model_handle = -1;
+  }
+  if (AM_rotated_points) {
+    mem_free(AM_rotated_points);
+    AM_rotated_points = nullptr;
+  }
+}
+
+// TCAMReadControls
+void TCAMMove(float forward, float vertical, float sideways, float pitch, float heading, float frametime) {
+  AM_view_pos += (forward * frametime * AM_TRANSLATION_SCALAR) * AM_view_orient.fvec;
+  AM_view_pos += (vertical * frametime * AM_TRANSLATION_SCALAR) * AM_view_orient.uvec;
+  AM_view_pos += (sideways * frametime * AM_TRANSLATION_SCALAR) * AM_view_orient.rvec;
+
+  const float norm = ((65536 / 360) * AM_ROTATIONAL_SCALAR) * frametime;
+  AM_pitch += norm * pitch;
+  AM_heading += norm * heading;
+  if (AM_pitch < 0)
+    AM_pitch += 65536;
+  if (AM_pitch >= 65536)
+    AM_pitch -= 65536;
+  if (AM_heading < 0)
+    AM_heading += 65536;
+  if (AM_heading >= 65536)
+    AM_heading -= 65536;
+
+  vm_AnglesToMatrix(&AM_view_orient, (uint16_t)AM_pitch, (uint16_t)AM_heading, 0);
+  vm_Orthogonalize(&AM_view_orient);
+}
+
+// TCAMCallback
+void TCAMDraw(int x1, int y1, int x2, int y2) {
+  StartFrame(x1, y1, x2, y2);
+  g3_StartFrame(&AM_view_pos, &AM_view_orient, Render_zoom);
+
+  if (AM_center_on_player) {
+    TCAMCenterOnPlayer();
+    AM_center_on_player = 0;
+  }
+
+  rend_SetFiltering(1);
+  rend_SetAlphaType(AT_VERTEX);
+  rend_SetTextureType(TT_FLAT);
+  rend_SetLighting(LS_GOURAUD);
+  rend_SetColorModel(CM_RGB);
+  rend_SetOverlayType(OT_NONE);
+  rend_SetZBufferState(1);
+
+  TCAMBuildRoomList(Viewer_object->roomnum);
+  for (int i = 0; i < Num_AM_rooms; i++) {
+    TCAMRenderRoom(AM_room_list[i]);
+  }
+  if (AM_terrain)
+    TCAMRenderTerrain();
+
+  g3_EndFrame();
+  TCAMDrawObjects();
+  EndFrame();
+  rend_SetFiltering(0);
+}
+// #endregion

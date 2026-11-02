@@ -192,6 +192,7 @@ DYNAEXTERN(glCheckFramebufferStatus);
 DYNAEXTERN(glDeleteFramebuffers);
 DYNAEXTERN(glDeleteRenderbuffers);
 DYNAEXTERN(glFramebufferRenderbuffer);
+DYNAEXTERN(glFramebufferTexture2D); // RHH [Port] For the port's ship preview and automap
 DYNAEXTERN(glGenFramebuffers);
 DYNAEXTERN(glGenRenderbuffers);
 DYNAEXTERN(glRenderbufferStorage);

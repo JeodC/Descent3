@@ -13,6 +13,7 @@
 #include "log.h"
 #include "port/GameInteractor/GameInteractor.h"
 #include "port/PortInit.hpp"
+#include "port/UI/Gui.h"
 
 #define PAD_SDL_BUTTONS (JOYPAD_LT - 1)
 #define PAD_NUM_BUTTONS JOYPAD_RT
@@ -185,7 +186,9 @@ static void Button(int button, bool down) {
       Back_held = true;
     } else if (Back_held) {
       Back_held = false;
-      Input_KeyPress(KEY_ESC);
+      if (!Gui_SelectTapped()) {
+        Input_KeyPress(KEY_ESC);
+      }
     }
     return;
   }
@@ -274,7 +277,7 @@ static void RegisterGamepad() {
   });
   COND_VB_SHOULD(VB_GAME_HANDLES_SDL_EVENT, true, {
     const SDL_Event *event = va_arg(args, SDL_Event *);
-    if (FilterEvent(event)) {
+    if (Gui_FilterEvent(event) || FilterEvent(event)) {
       *should = false;
     }
   });

@@ -1481,3 +1481,7 @@ int CtlFindBinding(int controlid, bool keyboard) {
   }
   return -1;
 }
+
+// #region RHH [Port] For the port's controls page
+extern const int N_cfg_joy_elements = N_JOY_CFG_FN;
+// #endregion

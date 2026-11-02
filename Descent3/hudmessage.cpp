@@ -1851,3 +1851,8 @@ void MsgListConsole::DoInput() {
     }
   }
 }
+
+// #region RHH [Port] For the port's message pages
+const char *GetHUDMessage(int index) { return HUD_msg_list.get(index); }
+const char *GetGameMessage(int index) { return Game_msg_list.get(index); }
+// #endregion

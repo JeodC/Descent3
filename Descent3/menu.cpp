@@ -839,12 +839,15 @@ int MainMenu() {
       break;
     case IDV_OPTIONS:
       main_menu.SetMusicRegion(OPTIONS_MUSIC_REGION);
-      OptionsMenu();
+      if (GameInteractor_Should(VB_OPEN_MAIN_MENU_ITEM, true, IDV_OPTIONS))
+        OptionsMenu();
       break;
     case IDV_PILOT:
       main_menu.SetMusicRegion(OPTIONS_MUSIC_REGION);
-      DoWaitMessage(true);
-      PilotSelect();
+      if (GameInteractor_Should(VB_OPEN_MAIN_MENU_ITEM, true, IDV_PILOT)) {
+        DoWaitMessage(true);
+        PilotSelect();
+      }
       break;
     case IDV_MULTIPLAYER: {
       IsCheater = false;

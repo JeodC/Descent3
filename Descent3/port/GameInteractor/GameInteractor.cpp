@@ -36,6 +36,16 @@ void GameInteractor_ExecuteOnMovieFrame(int x, int y, int width, int height) {
   GameInteractor::Instance->ExecuteHooks<GameInteractor::OnMovieFrame>(x, y, width, height);
 }
 
+void GameInteractor_ExecuteOnRendContextClosing() {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnRendContextClosing>();
+}
+
+void GameInteractor_ExecuteOnRendContextCreated(SDL_Window *window, void *glContext) {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnRendContextCreated>(window, glContext);
+}
+
+void GameInteractor_ExecuteOnRendFlip() { GameInteractor::Instance->ExecuteHooks<GameInteractor::OnRendFlip>(); }
+
 bool GameInteractor_ShouldV(GIVanillaBehavior flag, uint32_t result, va_list args) {
   // Because of default argument promotion, even though our incoming "result" is just a bool, it needs to be typed as
   // an int to be permitted to be used in `va_start`, otherwise it is undefined behavior.

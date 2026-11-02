@@ -1221,6 +1221,9 @@ void ProcessGuidebotKeys(int key) {
 // Deals with a normal (non-debug) key.  Once the key is handled, this function returns
 
 void ProcessNormalKey(int key) {
+  if (!GameInteractor_Should(VB_PROCESS_GAME_KEY, true, key))
+    return;
+
   // First do keys that work normally even when dead
   switch (key) {
 

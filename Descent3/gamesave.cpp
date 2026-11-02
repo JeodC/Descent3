@@ -1711,3 +1711,10 @@ void SGSSnapshot(CFILE *fp) {
 //@@			gs_WriteVector(fp, dwb->cur_target);
 //@@			gs_WriteByte(fp, dwb->upgrade_level);
 //@@			gs_WriteInt(fp, dwb->flags);
+
+// #region RHH [Port] For the port's Saved Games page
+void LoadGameFromPath(const std::filesystem::path &pathname) {
+  LGS_Path = pathname;
+  SetGameState(GAMESTATE_LOADGAME);
+}
+// #endregion

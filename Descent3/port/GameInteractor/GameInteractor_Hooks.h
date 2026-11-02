@@ -26,6 +26,9 @@ void GameInteractor_ExecuteOnMissionListFilled(newuiListBox *list, std::vector<s
 void GameInteractor_ExecuteOnMissionStatusUpdate();
 void GameInteractor_ExecuteOnMovieEnd();
 void GameInteractor_ExecuteOnMovieFrame(int x, int y, int width, int height);
+void GameInteractor_ExecuteOnRendContextClosing();
+void GameInteractor_ExecuteOnRendContextCreated(SDL_Window *window, void *glContext);
+void GameInteractor_ExecuteOnRendFlip();
 
 bool GameInteractor_Should(GIVanillaBehavior flag, uint32_t result, ...);
 GI_EXPORT bool GameInteractor_ShouldV(GIVanillaBehavior flag, uint32_t result, va_list args);

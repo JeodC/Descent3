@@ -2029,7 +2029,7 @@ void RunGameMenu() {
     case GAME_TELCOM_BRIEFINGS: {
       DoWaitPopup(true, TXT_TELCOMLOAD);
       ui_ShowCursor();
-      TelComShow(TS_MAINMENU);
+      TelComShow(GameInteractor_Should(VB_TELCOM_OPENS_MAIN_MENU, true) ? TS_MAINMENU : TS_MISSION);
       ui_HideCursor();
       DoWaitPopup(false);
     } break;
@@ -2053,7 +2053,8 @@ void RunGameMenu() {
       }
       break;
     case GAME_LEVEL_WARP:
-      Level_warp_next = DisplayLevelWarpDlg(-1);
+      if (GameInteractor_Should(VB_SHOW_LEVEL_WARP_DIALOG, true, &Level_warp_next))
+        Level_warp_next = DisplayLevelWarpDlg(-1);
       if (Level_warp_next != -1)
         SetGameState(GAMESTATE_LVLWARP);
       break;
@@ -2076,7 +2077,9 @@ void RunGameMenu() {
         }
 
       } else {
-        ret = DoMessageBox(TXT_CONFIRM, TXT_CONFIRMEXIT, MSGBOX_YESNO);
+        ret = GameInteractor_Should(VB_CONFIRM_EXIT_GAME, true)
+                  ? DoMessageBox(TXT_CONFIRM, TXT_CONFIRMEXIT, MSGBOX_YESNO)
+                  : 1;
       }
       if (ret) {
         Demo_looping = false;
@@ -2113,7 +2116,8 @@ void RunGameMenu() {
         DoMessageBox("Silly", "You can't save while playing from the editor!", MSGBOX_OK);
       else
 #endif
-        SaveGameDialog(); // link to above endif!
+        if (GameInteractor_Should(VB_SHOW_SAVE_DIALOG, true))
+          SaveGameDialog(); // link to above endif!
       ui_HideCursor();
       break;
 

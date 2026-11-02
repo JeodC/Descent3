@@ -15,6 +15,24 @@ typedef enum {
 
   // #### `result`
   // ```c
+  // false
+  // ```
+  // Whether a key is down to skip the cinematic, when no key on the keyboard is.
+  // #### `args`
+  // - None
+  VB_CINEMATIC_KEY_PRESSED,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether leaving the game asks first.
+  // #### `args`
+  // - None
+  VB_CONFIRM_EXIT_GAME,
+
+  // #### `result`
+  // ```c
   // true
   // ```
   // A listener may change the name a joystick's axis or button shows in bindings.
@@ -133,6 +151,15 @@ typedef enum {
 
   // #### `result`
   // ```c
+  // true
+  // ```
+  // Whether picking the main menu item opens its screen.
+  // #### `args`
+  // - `int32_t` (the item's IDV_ id)
+  VB_OPEN_MAIN_MENU_ITEM,
+
+  // #### `result`
+  // ```c
   // scalar > .01, or with || (robotobj->mtype.phys_info.flags & PF_LOCK_MASK) for a robot
   // ```
   // Whether a ship bumping a ship or a robot makes a sound, and lets the robots hear it.
@@ -149,6 +176,15 @@ typedef enum {
   // - `*object` (playerobj)
   // - `int32_t` (the sound)
   VB_PLAY_PLAYER_HIT_SOUND,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether the game does what the key does in a level.
+  // #### `args`
+  // - `int32_t` (key)
+  VB_PROCESS_GAME_KEY,
 
   // #### `result`
   // ```c
@@ -199,6 +235,15 @@ typedef enum {
   // ```c
   // true
   // ```
+  // Whether warping asks which level, or else warps to the one a listener puts in Level_warp_next.
+  // #### `args`
+  // - `*int` (Level_warp_next)
+  VB_SHOW_LEVEL_WARP_DIALOG,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
   // Whether menus and the TelCom show the mouse cursor.
   // #### `args`
   // - None
@@ -217,6 +262,15 @@ typedef enum {
   // ```c
   // true
   // ```
+  // Whether the game opens the save dialog, between frames.
+  // #### `args`
+  // - None
+  VB_SHOW_SAVE_DIALOG,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
   // Whether New Game's mission list sorts its missions by name.
   // #### `args`
   // - None
@@ -230,6 +284,15 @@ typedef enum {
   // #### `args`
   // - None
   VB_TELCOM_ARROW_MOVES_FOCUS,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether the TelCom opens on its main menu, or else on the level's briefing.
+  // #### `args`
+  // - None
+  VB_TELCOM_OPENS_MAIN_MENU,
 
   // #### `result`
   // ```c
