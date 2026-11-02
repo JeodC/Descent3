@@ -588,6 +588,7 @@
 #include "viseffect.h"
 #include "pserror.h"
 #include "psrand.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 
 static void SetDeformDamageEffect(object *obj);
@@ -747,12 +748,14 @@ void PlayPlayerDamageSound(object *playerobj, int damage_type) {
     return;
   }
 
-  Sound_system.Play3dSound(sound_handle, SND_PRIORITY_HIGHEST, playerobj);
+  if (GameInteractor_Should(VB_PLAY_PLAYER_HIT_SOUND, true, playerobj, sound_handle))
+    Sound_system.Play3dSound(sound_handle, SND_PRIORITY_HIGHEST, playerobj);
 }
 
 // Plays the sound for a player being damaged
 void PlayPlayerInvulnerabilitySound(object *playerobj) {
-  Sound_system.Play3dSound(SOUND_METALLIC_DOOR_HIT, SND_PRIORITY_HIGHEST, playerobj);
+  if (GameInteractor_Should(VB_PLAY_PLAYER_HIT_SOUND, true, playerobj, SOUND_METALLIC_DOOR_HIT))
+    Sound_system.Play3dSound(SOUND_METALLIC_DOOR_HIT, SND_PRIORITY_HIGHEST, playerobj);
 }
 
 // Kills the player

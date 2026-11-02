@@ -859,6 +859,7 @@
 #include "trigger.h"
 #include "vecmat.h"
 #include "weapon.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 #define PLAYER_ROTATION_BY_FORCE_SCALAR 0.12f
 #define NONPLAYER_ROTATION_BY_FORCE_SCALAR 1.0f
@@ -1362,7 +1363,8 @@ void collide_player_and_wall(object *playerobj, float hitspeed, int hitseg, int 
     if (hitspeed > MIN_WALL_DAMAGE_SPEED) {
       if (playerobj == Player_object && playerobj->shields >= MIN_WALL_HIT_DAMAGE_SHIELDS) {
         if ((!(Game_mode & GM_MULTI)) || Netgame.local_role == LR_SERVER)
-          ApplyDamageToPlayer(playerobj, playerobj, PD_WALL_HIT, WALL_DAMAGE);
+          ApplyDamageToPlayer(playerobj, playerobj, PD_WALL_HIT, WALL_DAMAGE, 0, 255,
+                              GameInteractor_Should(VB_WALL_DAMAGE_PLAYS_SOUND, true));
         else {
           Multi_requested_damage_type = PD_WALL_HIT;
           Multi_requested_damage_amount += (WALL_DAMAGE);
@@ -2051,7 +2053,7 @@ void collide_player_and_player(object *p1, object *p2, vector *collision_point, 
     scalar = (speed - MIN_WALL_HIT_SOUND_VEL) / (MAX_WALL_HIT_SOUND_VEL - MIN_WALL_HIT_SOUND_VEL);
   }
 
-  if (scalar > .01) {
+  if (GameInteractor_Should(VB_PLAY_CONTACT_SOUND, scalar > .01, p1->id)) {
     pos_state cur_pos;
     cur_pos.position = collision_point;
     cur_pos.orient = &p1->orient;
@@ -2103,7 +2105,8 @@ void collide_generic_and_player(object *robotobj, object *playerobj, vector *col
     }
   }
 
-  if (scalar > .01 || (robotobj->mtype.phys_info.flags & PF_LOCK_MASK)) {
+  if (GameInteractor_Should(VB_PLAY_CONTACT_SOUND, scalar > .01 || (robotobj->mtype.phys_info.flags & PF_LOCK_MASK),
+                            playerobj->id)) {
     pos_state cur_pos;
     cur_pos.position = collision_point;
     cur_pos.orient = &playerobj->orient;
@@ -2131,7 +2134,8 @@ void collide_generic_and_player(object *robotobj, object *playerobj, vector *col
             (robotobj->mtype.phys_info.flags & PF_POINT_COLLIDE_WALLS))
           scalar = 1.0f;
 
-        ApplyDamageToPlayer(playerobj, playerobj, PD_WALL_HIT, 2.0f * Frametime * scalar);
+        ApplyDamageToPlayer(playerobj, playerobj, PD_WALL_HIT, 2.0f * Frametime * scalar, 0, 255,
+                            GameInteractor_Should(VB_WALL_DAMAGE_PLAYS_SOUND, true));
       }
     }
   }

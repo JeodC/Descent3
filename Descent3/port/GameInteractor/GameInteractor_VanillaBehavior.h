@@ -15,10 +15,38 @@ typedef enum {
 
   // #### `result`
   // ```c
+  // scalar > .01, or with || (robotobj->mtype.phys_info.flags & PF_LOCK_MASK) for a robot
+  // ```
+  // Whether a ship bumping a ship or a robot makes a sound, and lets the robots hear it.
+  // #### `args`
+  // - `int32_t` (the player's id)
+  VB_PLAY_CONTACT_SOUND,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether a hit on the player's ship plays its sound.
+  // #### `args`
+  // - `*object` (playerobj)
+  // - `int32_t` (the sound)
+  VB_PLAY_PLAYER_HIT_SOUND,
+
+  // #### `result`
+  // ```c
   // true
   // ```
   // Whether ProgramVersion saves the version in its copy of the registry.
   // #### `args`
   // - None
   VB_SAVE_PROGRAM_VERSION,
+
+  // #### `result`
+  // ```c
+  // true
+  // ```
+  // Whether bumping a wall or a robot hard enough to hurt plays the damage sound, besides the bump sound.
+  // #### `args`
+  // - None
+  VB_WALL_DAMAGE_PLAYS_SOUND,
 } GIVanillaBehavior;
