@@ -46,6 +46,7 @@
 #include "log.h"
 #include "config.h"
 #include "pilot.h"
+#include "port/Port.h"
 
 #ifdef WIN32
 #include "debug.h"
@@ -241,6 +242,8 @@ int main(int argc, char *argv[]) {
   InitLog(log_level, FindArg("-logfile"), enable_winconsole);
 
   LOG_INFO.printf("Welcome to Descent 3 v%d.%d.%d %s", D3_MAJORVER, D3_MINORVER, D3_BUILD, D3_GIT_HASH);
+
+  Port_Startup(); // RHH [Port] Before anything else, so port features can change all that follows
 
 #ifdef DEDICATED
   setenv("SDL_VIDEODRIVER", "dummy", 1);

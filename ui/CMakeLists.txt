@@ -30,6 +30,7 @@ target_link_libraries(ui PRIVATE
   grtext
   logger
   mem
+  port_module_bridge # RHH [Port] Its hooks, in the netcon modules
 )
 target_include_directories(ui PUBLIC
   $<BUILD_INTERFACE:

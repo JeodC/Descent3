@@ -350,6 +350,7 @@ target_link_libraries(Descent3 PRIVATE
   vecmat
   ${PLATFORM_LIBS})
 target_include_directories(Descent3 PRIVATE ${PROJECT_BINARY_DIR}/lib ${SDL3_INCLUDE_DIRS})
+include(port/Port.cmake) # RHH [Port]
 target_link_options(Descent3 PRIVATE $<$<PLATFORM_ID:Windows>:/DEBUG:FULL>)
 set_target_properties(Descent3 PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/build")
 add_dependencies(Descent3

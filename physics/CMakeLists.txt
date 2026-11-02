@@ -18,6 +18,7 @@ target_link_libraries(physics PRIVATE
   misc
   model
   module
+  port_module_bridge # RHH [Port] Its hooks, in the netgame modules
   rtperformance
   sndlib
 )

@@ -34,6 +34,7 @@ target_link_libraries(ddio PRIVATE
   ddebug
   logger
   mem
+  port_module_bridge # RHH [Port] Its hooks, in the netcon and netgame modules
 )
 target_include_directories(ddio PUBLIC
   $<BUILD_INTERFACE:

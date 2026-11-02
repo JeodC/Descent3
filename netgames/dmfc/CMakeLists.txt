@@ -35,5 +35,6 @@ target_link_libraries(dmfc PUBLIC
   module
   physics
   ddio
+  port_module_bridge # RHH [Port] Its hooks, in the netgame modules
 )
 target_include_directories(dmfc PRIVATE ${SDL3_INCLUDE_DIRS})
