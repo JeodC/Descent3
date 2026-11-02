@@ -2964,6 +2964,8 @@ void TelComHandleKeyPress(int key, bool click, int screen_id) {
 
       if (found == -1) {
         // we found nothing, we're done
+        if (GameInteractor_Should(VB_TELCOM_ARROW_MOVES_FOCUS, false))
+          TelComHandleKeyPress(key == TCSYS_UP ? TCSYS_REVERSETAB : TCSYS_TAB, click, screen_id);
         break;
       }
       curr_focus = found;

@@ -215,6 +215,7 @@
 #include "TelCom.h"
 #include "TelComEffects.h"
 #include "Mission.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 struct tBriefingTag {
   const char *name;
@@ -496,7 +497,8 @@ void PBAddButtonEffect(TCBUTTONDESC* desc, char *description, int id) {
   if (IsMissionMaskOK(desc->mission_mask_set, desc->mission_mask_unset) && ok_to_parse_screen) {
     desc->x += osb_xoff;
     desc->y += osb_yoff;
-    desc->tab_stop = false; // no briefing buttons can have focus
+    desc->tab_stop =
+        GameInteractor_Should(VB_BRIEFING_BUTTON_FOCUSABLE, false, desc); // no briefing buttons can have focus
     CreateButtonEffect(desc, MONITOR_MAIN, current_screen, id);
   }
 }

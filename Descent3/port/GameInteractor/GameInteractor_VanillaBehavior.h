@@ -6,6 +6,15 @@
 typedef enum {
   // #### `result`
   // ```c
+  // false
+  // ```
+  // Whether the briefing's button is a tab stop.
+  // #### `args`
+  // - `*TCBUTTONDESC` (desc)
+  VB_BRIEFING_BUTTON_FOCUSABLE,
+
+  // #### `result`
+  // ```c
   // true
   // ```
   // Whether the registry writes .Descent3Registry.
@@ -141,6 +150,15 @@ typedef enum {
   // #### `args`
   // - None
   VB_SORT_MISSION_LIST,
+
+  // #### `result`
+  // ```c
+  // false
+  // ```
+  // Whether Up or Down moves focus, as Shift+Tab or Tab does, when there's no text to scroll.
+  // #### `args`
+  // - None
+  VB_TELCOM_ARROW_MOVES_FOCUS,
 
   // #### `result`
   // ```c
