@@ -851,7 +851,7 @@ void PlayGame() {
 
 void SetGamemodeScript(const char *scrfilename, int num_teams) {
   if (scrfilename != nullptr)
-    strcpy(Gamemode_info.scriptname, scrfilename);
+    strcpy(Gamemode_info.scriptname, NetgameModuleName(scrfilename)); // RHH [Bugfix]
   else
     Gamemode_info.scriptname[0] = 0;
   Gamemode_info.requested_num_teams = num_teams;

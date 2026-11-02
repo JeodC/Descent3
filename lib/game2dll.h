@@ -85,6 +85,8 @@ void CallGameDLL(int eventnum, dllinfo *data);
 // Frees the dll if it is in memory
 void FreeGameDLL();
 
+const char *NetgameModuleName(const char *name); // RHH [Bugfix]
+
 // Loads the game dll.  Returns 1 on success, else 0 on failure
 int LoadGameDLL(const char *name, int num_teams_to_use = -1);
 

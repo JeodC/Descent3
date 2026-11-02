@@ -128,6 +128,7 @@
 #include "httpclient.h"
 #include "networking.h"
 #include "multi.h"
+#include "game2dll.h"
 #include "log.h"
 #include "ui.h"
 #include "newui.h"
@@ -830,7 +831,10 @@ int CheckGetD3M(char *d3m) {
   char *lowurl;
   char *fixedd3m = nullptr;
 
-  if (cfexist(d3m) || cfexist(std::filesystem::path(LocalD3Dir) / "netgames" / d3m)) {
+  // RHH [Bugfix] Servers on older builds ask for modules by their old names
+  std::filesystem::path module = NetgameModuleName(d3m);
+  module.replace_extension(".d3m");
+  if (cfexist(module) || cfexist(std::filesystem::path(LocalD3Dir) / "netgames" / module)) {
     return 1;
   }
 

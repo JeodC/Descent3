@@ -17,6 +17,8 @@
 */
 
 #include <algorithm>
+#include <filesystem>
+#include <string>
 
 #include "pstypes.h"
 #include "pserror.h"
@@ -562,6 +564,24 @@ void CloseGameModule(module_t *mod) {
   }
   mod->handle = nullptr;
 }
+
+// #region RHH [Bugfix] Builds before October 2024 named four modules after their build targets, and servers running
+// them still ask for those names
+const char *NetgameModuleName(const char *name) {
+  static const char *const renamed[][2] = {{"coop", "co-op"},
+                                           {"tanarchy", "team anarchy"},
+                                           {"hyperanarchy", "hyper-anarchy"},
+                                           {"roboanarchy", "robo-anarchy"}};
+  const std::string stem = std::filesystem::path(name).stem().u8string();
+  for (const auto &names : renamed) {
+    if (!stricmp(stem.c_str(), names[0])) {
+      return names[1];
+    }
+  }
+  return name;
+}
+// #endregion
+
 // this function will load up the DLL, but not get any symbols
 bool InitGameModule(const char *name, module_t *mod) {
   std::filesystem::path lib_name;
