@@ -1854,7 +1854,8 @@ void EndLevel(int state) {
   if (!(Game_mode & GM_MULTI)) {
 
     // report the information to the pilot's mission data
-    CurrentPilotUpdateMissionStatus();
+    // RHH [Bugfix] Only a finished level counts, not a failed one or a warp away (issue #468)
+    CurrentPilotUpdateMissionStatus(state != 1);
     //		Sound_system.StopAllSounds();		-- moved to below because bug was reported that sounds were
     // playing in performance screen
 
