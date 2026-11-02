@@ -6,8 +6,16 @@ void GameInteractor_ExecuteOnDatabaseCreated() {
   GameInteractor::Instance->ExecuteHooks<GameInteractor::OnDatabaseCreated>();
 }
 
+void GameInteractor_ExecuteOnLevelWarpListFilled(newuiListBox *list, int highestAllowed, int maxLevel) {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnLevelWarpListFilled>(list, highestAllowed, maxLevel);
+}
+
 void GameInteractor_ExecuteOnMissionListFilled(newuiListBox *list, std::vector<std::filesystem::path> *files) {
   GameInteractor::Instance->ExecuteHooks<GameInteractor::OnMissionListFilled>(list, files);
+}
+
+void GameInteractor_ExecuteOnMissionStatusUpdate() {
+  GameInteractor::Instance->ExecuteHooks<GameInteractor::OnMissionStatusUpdate>();
 }
 
 void GameInteractor_ExecuteOnMovieEnd() { GameInteractor::Instance->ExecuteHooks<GameInteractor::OnMovieEnd>(); }

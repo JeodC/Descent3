@@ -606,6 +606,7 @@
 #include "stringtable.h"
 #include "vclip.h"
 #include "weapon.h"
+#include "port/GameInteractor/GameInteractor_Hooks.h"
 
 // some general defines
 #define IDP_SAVE 10
@@ -1494,6 +1495,7 @@ void CurrentPilotUpdateMissionStatus(bool just_add_data) {
   }
 
   if (!just_add_data) {
+    GameInteractor_ExecuteOnMissionStatusUpdate();
     // bad place to do this, but this code was added at the last minute.  a long term fix requires more files to fix.
     int max_level;
     for (max_level = 0; max_level < Current_mission.num_levels; max_level++) {

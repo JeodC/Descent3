@@ -1320,6 +1320,7 @@ int DisplayLevelWarpDlg(int max_level) {
     ss << std::setw(2) << std::setfill('0') << i + 1 << ". " << info.name;
     level_listbox->AddItem(ss.str().c_str());
   }
+  GameInteractor_ExecuteOnLevelWarpListFilled(level_listbox, highest_allowed, max_level);
 
   if (mn3_handle != -1) {
     cf_CloseLibrary(mn3_handle);
