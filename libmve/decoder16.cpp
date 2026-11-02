@@ -342,8 +342,9 @@ static void dispatchDecoder16(unsigned short **pFrame, unsigned char codeType, u
     --*pDataRemain;
     break;
   case 0x5:
-    x = (char)*(*pData)++;
-    y = (char)*(*pData)++;
+    // RHH [Bugfix] The vectors are signed, and plain char is unsigned on ARM
+    x = (signed char)*(*pData)++;
+    y = (signed char)*(*pData)++;
     copyFrame(*pFrame, *pFrame + (backBuf2 - backBuf1) + x + y * g_width);
     *pDataRemain -= 2;
     break;
